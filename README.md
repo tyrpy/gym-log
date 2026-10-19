@@ -13,6 +13,46 @@
 
 App 内也有入口：「我的 → 安装到手机主屏幕」，会按你的系统给出对应步骤。
 
+## 安卓 APK
+
+不想用浏览器安装，可以直接装安卓安装包（把网页打包进原生壳，**断网可用**）。
+
+**下载**：[Releases → v1.0.0 → gym-log-tyrpy.apk](https://github.com/tyrpy/gym-log/releases/latest)
+
+| 项目 | 值 |
+|---|---|
+| 包名 | `io.github.tyrpy.gymlog` |
+| 应用名 | 健身日志 |
+| 支持版本 | Android 7.0（API 24）及以上 |
+| 体积 | 约 4.7 MB |
+| 签名 | 调试签名（个人使用） |
+
+安装步骤：
+
+1. 手机浏览器打开上面的 Release 页面，下载 `gym-log-tyrpy.apk`
+2. 点开下载好的文件
+3. 若提示「禁止安装未知应用」，允许**这一次**安装
+4. 装好后桌面出现「健身日志」图标
+
+### 自己重新打包
+
+需要 JDK 17+ 和 Android SDK（`ANDROID_HOME` 指向 SDK 目录）。
+
+```bash
+pnpm install
+pnpm build
+npx cap copy android
+cd android
+./gradlew assembleDebug        # 产物：app/build/outputs/apk/debug/app-debug.apk
+```
+
+图标资源由 `node scripts/android-icons.mjs` 生成（依赖本机 Chrome 渲染）。
+
+> 国内网络下 `dl.google.com` 和 `services.gradle.org` 很慢，可以用腾讯云镜像：
+> SDK 包在 `https://mirrors.cloud.tencent.com/AndroidSDK/`，
+> Gradle 在 `https://mirrors.cloud.tencent.com/gradle/`，
+> Maven 依赖可用阿里云镜像。
+
 ## 本地开发
 
 ```bash
