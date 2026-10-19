@@ -2,30 +2,28 @@
 
 记录每天练了哪些部位、做了哪些动作、每组多重多少次。本地优先：数据只存在你这台设备的浏览器里，不联网、不上传。
 
-## 怎么用
+## 手机上安装（推荐）
 
-### 在这台电脑上
+**线上地址：https://tyrpy.github.io/gym-log/**
+
+1. 手机浏览器打开上面的地址（Android 用 Chrome，iPhone 用 Safari；微信里打开不行）
+2. **Android**：菜单 →「安装应用」/「添加到主屏幕」
+3. **iPhone**：分享按钮 →「添加到主屏幕」→ 添加
+4. 之后从桌面图标打开，**第一次加载完就能断网使用**
+
+App 内也有入口：「我的 → 安装到手机主屏幕」，会按你的系统给出对应步骤。
+
+## 本地开发
 
 ```bash
 pnpm install     # 第一次
-pnpm dev         # 开发模式，浏览器打开 http://127.0.0.1:5173
+pnpm dev         # 开发模式：http://127.0.0.1:5173
+pnpm build       # 生产构建到 dist/
+pnpm preview     # 本地预览构建产物：http://127.0.0.1:4173
 ```
 
-想长期使用、不每次开终端：
-
-```bash
-pnpm build       # 生成 dist/ 静态文件
-pnpm preview     # 本地预览构建产物（默认 4173 端口）
-```
-
-### 在手机上（同一个 Wi-Fi）
-
-1. 电脑上保持 `pnpm dev` 运行
-2. 手机浏览器打开 **http://192.168.5.16:5173**
-3. 想要像 App 一样：iPhone 用 Safari「分享 → 添加到主屏幕」；Android 用 Chrome 菜单「安装应用 / 添加到主屏幕」
-
-> 注意：`127.0.0.1` 和 `192.168.x.x` 在浏览器看来是**两个不同站点**，数据不互通。
-> 决定用哪个地址当主入口后，就一直用那个，别来回换。换端口同理（5173 ≠ 4173）。
+> **注意数据是分站点存的**：线上地址、`127.0.0.1`、`192.168.x.x` 在浏览器看来是不同站点，数据互不通用。
+> 换站点时用「我的 → 导出备份 / 导入备份」搬运。日常请固定用线上那一个。
 
 ## 界面预览
 
@@ -79,18 +77,41 @@ scripts/                端到端测试、截图、图标生成
 pnpm typecheck          # 类型检查
 pnpm build              # 构建到 dist/
 node scripts/e2e.mjs    # 真实浏览器点一遍核心流程（需要先 pnpm dev）
+node scripts/pwa.mjs    # 验证 manifest / Service Worker / 断网可用（需要先 pnpm preview）
 node scripts/visual.mjs # 注入示例数据并截图到 .shots/ui/
 ```
+
+## 发布
+
+推送到 `main` 后，GitHub Actions 自动构建并部署到 Pages：
+
+- 工作流：`.github/workflows/deploy.yml`
+- 构建时会按仓库名设置子路径（`--base=/gym-log/`），所以资源路径不会错
+- 仓库需在 **Settings → Pages → Source** 选 **GitHub Actions**
+- 站点：https://tyrpy.github.io/gym-log/
+- Actions 页：https://github.com/tyrpy/gym-log/actions
+
+手动发布（本地）：
+
+```bash
+pnpm exec vite build --base=/gym-log/
+```
+
+然后把 `dist/` 里的内容传到任意静态托管（Cloudflare Pages、Vercel、对象存储皆可）。
+
 ## 常见问题
 
 **手机上打不开？**
-手机和电脑要连同一个 Wi-Fi；公司/学校网络有时会隔离设备，换成手机热点再试。
+用线上地址 https://tyrpy.github.io/gym-log/ ；国内网络偶尔访问 GitHub Pages 较慢，多等几秒或换网络。
+
+**安装后没网还能用吗？**
+能。第一次成功打开后，页面、脚本、图标都会存进本机缓存。之后就算飞行模式也能记录，数据写在本机，联网后也不会自动上传（本来就不上传）。
 
 **换手机 / 清理缓存后数据没了？**
 数据在浏览器本地，换设备不会自动同步。用「我的 → 导出备份」，在新设备上「导入备份」。
 
-**更新代码后数据还在吗？**
-在。数据存在浏览器的 localStorage，和代码文件无关；除非你手动点了「清空全部数据」。
+**更新版本后数据还在吗？**
+在。代码和数据分开存，更新只会替换页面文件。App 检测到新版本会在底部提示，你点「更新」才刷新。
 
 **想改练法 / 加动作？**
 动作在「添加动作」面板底部可以直接新建；整套流程在「我的 → 我的模板」里管理。
