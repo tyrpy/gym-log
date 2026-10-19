@@ -16,6 +16,10 @@ export function UpdatePrompt() {
   const [updateSW, setUpdateSW] = useState<((reload?: boolean) => Promise<void>) | null>(null)
 
   useEffect(() => {
+    // 打包成安卓 APK 时，页面文件就在安装包里，不需要也不应该注册 Service Worker
+    const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor
+    if (cap?.isNativePlatform?.()) return
+
     const fn = registerSW({
       immediate: true,
       onNeedRefresh() {

@@ -1,7 +1,16 @@
-﻿node_modules/
+node_modules/
 dist/
 .shots/
 .build.log
 *.local
 .DS_Store
 Thumbs.db
+
+# Capacitor / Android 构建产物（不需要入库）
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/app/src/main/assets/public/
+android/capacitor-cordova-android-plugins/
+android/app/src/main/res/xml/config.xml
