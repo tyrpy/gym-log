@@ -1,11 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" rx="112" fill="#e6512e"/>
-  <!-- 哑铃：杠 + 两侧配重 -->
-  <g fill="#ffffff">
-    <rect x="150" y="238" width="212" height="36" rx="10"/>
-    <rect x="96" y="188" width="64" height="136" rx="18"/>
-    <rect x="52" y="212" width="36" height="88" rx="14"/>
-    <rect x="352" y="188" width="64" height="136" rx="18"/>
-    <rect x="424" y="212" width="36" height="88" rx="14"/>
+  
+  <defs>
+    <linearGradient id="bg" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#1b1f25"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  
+  <g transform="translate(0,-54) scale(0.92) translate(24,22)">
+    
+  <g fill="#ffffff" transform="rotate(-6 256 230)">
+    <rect x="150" y="244" width="212" height="34" rx="10"/>
+    <rect x="98" y="196" width="62" height="130" rx="18"/>
+    <rect x="56" y="220" width="34" height="82" rx="13"/>
+    <rect x="352" y="196" width="62" height="130" rx="18"/>
+    <rect x="422" y="220" width="34" height="82" rx="13"/>
   </g>
+  </g>
+  <g transform="rotate(-4 256 386)">
+    <text x="186" y="414" font-family="'Arial Rounded MT Bold','Segoe UI','Verdana',sans-serif" font-size="92" font-weight="700"
+          letter-spacing="1" fill="#ffffff" text-anchor="middle">tyrpy</text>
+    <path d="M 322 402 L 339 419 L 370 382"
+          fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <rect x="6" y="6" width="500" height="500" rx="120" fill="none"
+  stroke="#ffffff" stroke-opacity="0.10" stroke-width="6"/>
 </svg>

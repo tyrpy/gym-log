@@ -15,7 +15,7 @@ export default defineConfig({
       // 有新版本时先提示，用户点「更新」再刷新，避免练到一半被打断
       registerType: 'prompt',
       injectRegister: false,
-      includeAssets: ['favicon.png', 'icon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon-v2.png', 'icon.svg', 'apple-touch-icon-v2.png'],
       manifest: {
         name: '健身日志',
         short_name: '健身日志',
@@ -29,9 +29,9 @@ export default defineConfig({
         theme_color: '#eff1f5',
         categories: ['health', 'fitness', 'sports'],
         icons: [
-          { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icon-192-v2.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icon-512-v2.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icon-maskable-512-v2.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
