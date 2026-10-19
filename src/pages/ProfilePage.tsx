@@ -128,6 +128,46 @@ export function ProfilePage() {
         </button>
       </Card>
 
+      {/* 安卓安装包 */}
+      <Card style={{ marginTop: 10, overflow: 'hidden' }}>
+        <a
+          href="./gym-log-tyrpy.apk"
+          download="gym-log-tyrpy.apk"
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '13px 14px',
+            textDecoration: 'none',
+            color: 'inherit',
+          }}
+        >
+          <div
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 11,
+              background: C.infoSoft,
+              color: C.info,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 'none',
+            }}
+          >
+            <Icon name="download" size={19} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14.5, fontWeight: 650 }}>下载安卓安装包（APK）</div>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 1, lineHeight: 1.5 }}>
+              约 4.7 MB · Android 7.0 以上 · 断网可用
+            </div>
+          </div>
+          <Icon name="right" size={16} style={{ color: C.muted }} />
+        </a>
+      </Card>
+
       {/* 自定义动作 */}
       <SectionTitle
         right={

@@ -17,7 +17,12 @@ App 内也有入口：「我的 → 安装到手机主屏幕」，会按你的�
 
 不想用浏览器安装，可以直接装安卓安装包（把网页打包进原生壳，**断网可用**）。
 
-**下载**：[Releases → v1.0.0 → gym-log-tyrpy.apk](https://github.com/tyrpy/gym-log/releases/latest)
+**下载**（两个地址内容相同，哪个快用哪个）：
+
+- 网站直链（国内通常更快）：https://tyrpy.github.io/gym-log/gym-log-tyrpy.apk
+- GitHub Releases：https://github.com/tyrpy/gym-log/releases/latest
+
+App 内也有入口：「我的 → 下载安卓安装包（APK）」。
 
 | 项目 | 值 |
 |---|---|
