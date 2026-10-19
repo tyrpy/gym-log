@@ -11,6 +11,7 @@ import { Modal } from '../ui/Sheet'
 import { toast } from '../ui/toast'
 import { useGym } from '../state/gym'
 import { InstallSheet, useInstallState } from '../ui/Install'
+import { CultivationStrip } from '../components/CultivationStrip'
 import {
   addCustomExercise,
   addDefaultTemplates,
@@ -87,6 +88,9 @@ export function ProfilePage() {
           <Stat label="总容量" value={fmtNumber(totalVolume)} unit="kg" />
         </div>
       </Card>
+
+      <SectionTitle>修行境界</SectionTitle>
+      <CultivationStrip />
 
       {/* 安装到手机 */}
       <Card style={{ marginTop: 10, overflow: 'hidden' }}>
@@ -347,7 +351,7 @@ export function ProfilePage() {
       </Card>
 
       <div style={{ textAlign: 'center', fontSize: 11.5, color: C.muted, marginTop: 20, lineHeight: 1.8 }}>
-        健身日志 v1 · 数据只保存在本机浏览器（localStorage）
+        健身日志 v1.1 · 数据只保存在本机浏览器（localStorage）
         <br />
         换浏览器或清理缓存会丢数据，记得导出备份
       </div>

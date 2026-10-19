@@ -8,6 +8,8 @@ import { UpdatePrompt } from './ui/UpdatePrompt'
 import { TodayPage } from './pages/TodayPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { LibraryPage } from './pages/LibraryPage'
+import { CultivationPage } from './pages/CultivationPage'
 
 // 趋势页依赖图表库，单独拆包，首屏更快
 const TrendsPage = lazy(() => import('./pages/TrendsPage').then((m) => ({ default: m.TrendsPage })))
@@ -29,6 +31,8 @@ function Router() {
           <TrendsPage />
         </Suspense>
       ) : null}
+      {page === 'library' ? <LibraryPage /> : null}
+      {page === 'cultivation' ? <CultivationPage /> : null}
       {page === 'me' ? <ProfilePage /> : null}
     </>
   )

@@ -75,6 +75,10 @@ pnpm preview     # 本地预览构建产物：http://127.0.0.1:4173
 ![今天](docs/screenshots/today.png)
 ![历史](docs/screenshots/history.png)
 ![趋势](docs/screenshots/trends.png)
+![动作库](docs/screenshots/library.png)
+![动作详情](docs/screenshots/library-detail.png)
+![修为](docs/screenshots/cultivation.png)
+![境界表](docs/screenshots/cultivation-levels.png)
 
 ## 功能
 
@@ -83,6 +87,8 @@ pnpm preview     # 本地预览构建产物：http://127.0.0.1:4173
 | **今天** | 选部位 → 选动作 → 逐组填重量/次数 → 打勾完成；自动开始组间休息倒计时（可暂停/+15s） |
 | **历史** | 月历上训练日按部位显示彩点；点某天看明细，可复制到「今天」 |
 | **趋势** | 选任意动作，看最重重量 / 总容量随时间的折线图，以及相对上次的变化 |
+| **动作库** | 38 个常见动作的示意图、分步做法、关键点和常见错误；可直接加入今天训练 |
+| **修为** | 训练积累修为，从练气到飞升共 10 大境界 37 级；连击奖励、称号、每级独立进度 |
 | **我的** | 自定义动作、训练模板、休息时长与提示音、导出/导入备份 |
 
 - **模板**：记录完一次训练 → 训练明细右上角「存为模板」，下次在「模板」面板一键套用
@@ -90,6 +96,13 @@ pnpm preview     # 本地预览构建产物：http://127.0.0.1:4173
 - **复制上次**：今天页空白时的「复制上次训练」，或模板面板里的「复制历史训练」
 - **撤销**：误删动作或改错数字，点底部「撤销」（桌面端也支持 Ctrl/Cmd+Z）
 - **预置动作库**：38 个常见动作。找不到就在「添加动作」面板底部新建
+
+### 修为等级
+
+- 境界：练气 → 筑基 → 金丹 → 元婴 → 化神 → 炼虚 → 合体 → 大乘 → 渡劫 → 飞升，共 37 级
+- 每天训练 +80 修为；组数、训练容量、破重量纪录另有加成
+- 连续修炼 3 / 7 / 14 / 30 / 60 / 100 / 365 天，获得额外修为和永久称号
+- 今天页顶部显示当前境界与进度，点开可看完整修为页和 37 级境界表
 
 ## 数据与备份
 
@@ -110,9 +123,10 @@ src/
   data/                 部位、预置动作库、子部位关键词
   lib/store.ts          全部读写操作（纯函数）+ 持久化 + 导入导出
   lib/utils.ts          日期、数字、格式化
+  lib/cultivation.ts    修为、等级、连击奖励计算
   state/gym.tsx         全局状态：reducer + 撤销栈 + URL 同步
   components/           部位块、动作选择器、日历、休息计时器、图表
-  pages/                今天 / 历史 / 趋势 / 我的
+  pages/                今天 / 历史 / 趋势 / 动作库 / 修为 / 我的
 scripts/                端到端测试、截图、图标生成
 ```
 
@@ -122,6 +136,8 @@ scripts/                端到端测试、截图、图标生成
 pnpm typecheck          # 类型检查
 pnpm build              # 构建到 dist/
 node scripts/e2e.mjs    # 真实浏览器点一遍核心流程（需要先 pnpm dev）
+node scripts/e2e-library.mjs      # 动作库：搜索、筛选、详情、加入今天
+node scripts/e2e-cultivation.mjs  # 修为：等级、连击、完整境界表
 node scripts/pwa.mjs    # 验证 manifest / Service Worker / 断网可用（需要先 pnpm preview）
 node scripts/visual.mjs # 注入示例数据并截图到 .shots/ui/
 ```

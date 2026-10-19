@@ -10,7 +10,7 @@ mkdirSync(outDir, { recursive: true })
 
 const chrome = spawn(
   CHROME,
-  ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--remote-debugging-port=${port}`,
+  ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', `--remote-debugging-port=${port}`,
    `--user-data-dir=${process.env.TEMP}\\gymlog-ui-${Date.now()}`, 'about:blank'],
   { stdio: 'ignore' },
 )
@@ -139,12 +139,15 @@ try {
   await shot('06-trends-volume')
 
   await nav(3)
-  await shot('07-profile')
+  await shot('07-library')
+
+  await nav(4)
+  await shot('08-profile')
 
   await nav(0)
   await sleep(700)
   await clickText('模板', true)
-  await shot('08-templates')
+  await shot('09-templates')
 
   console.log('errors:', errors.length ? errors.slice(0, 3) : 'none')
   console.log('shots ->', outDir)

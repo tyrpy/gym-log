@@ -6,6 +6,7 @@ const tabs: Array<{ id: Page; label: string; icon: string }> = [
   { id: 'today', label: '今天', icon: 'home' },
   { id: 'history', label: '历史', icon: 'calendar' },
   { id: 'trends', label: '趋势', icon: 'chart' },
+  { id: 'library', label: '动作', icon: 'dumbbell' },
   { id: 'me', label: '我的', icon: 'user' },
 ]
 
@@ -31,7 +32,7 @@ export function BottomNav() {
     >
       <div style={{ display: 'flex', width: '100%', maxWidth: MAXW, padding: '6px 6px 4px' }}>
         {tabs.map((t) => {
-          const active = page === t.id
+          const active = page === t.id || (page === 'cultivation' && t.id === 'me')
           return (
             <button
               key={t.id}

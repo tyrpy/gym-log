@@ -14,7 +14,7 @@ import { loadData, saveData } from '../lib/store'
 import { broadcastEdit } from '../ui/Undo'
 import { todayKey } from '../lib/utils'
 
-export type Page = 'today' | 'history' | 'trends' | 'me'
+export type Page = 'today' | 'history' | 'trends' | 'library' | 'me' | 'cultivation'
 
 interface HistoryState {
   /** 每次可撤销的修改 +1 */
@@ -103,7 +103,9 @@ export function GymProvider({ children }: { children: ReactNode }) {
 
   const [page, setPage] = useState<Page>(() => {
     const p = new URLSearchParams(location.search).get('page')
-    return p === 'history' || p === 'trends' || p === 'me' ? p : 'today'
+    return p === 'history' || p === 'trends' || p === 'library' || p === 'me' || p === 'cultivation'
+      ? p
+      : 'today'
   })
 
   const [date, setDateState] = useState<string>(() => {

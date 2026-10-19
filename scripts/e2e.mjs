@@ -14,6 +14,7 @@ const chrome = spawn(
   [
     '--headless=new',
     '--disable-gpu',
+    '--no-sandbox',
     '--hide-scrollbars',
     '--no-first-run',
     '--no-default-browser-check',
@@ -179,14 +180,20 @@ try {
   check('趋势页识别到动作', await bodyHas('杠铃卧推'))
   await shot('04-trends')
 
-  // 11) 我的页
+  // 11) 动作库
   await evaluate(`document.querySelectorAll('nav button')[3].click()`)
+  await sleep(700)
+  check('动作库页打开', (await bodyHas('动作库')) && (await bodyHas('38 个动作')))
+  await shot('05-library')
+
+  // 12) 我的页
+  await evaluate(`document.querySelectorAll('nav button')[4].click()`)
   await sleep(700)
   check('我的页打开', await bodyHas('我的动作'))
   check('设置项存在', await bodyHas('默认组间休息'))
-  await shot('05-profile')
+  await shot('06-profile')
 
-  // 12) 回今天
+  // 13) 回今天
   await evaluate(`document.querySelectorAll('nav button')[0].click()`)
   await sleep(600)
   check('返回今天页', await bodyHas('记录部位'))

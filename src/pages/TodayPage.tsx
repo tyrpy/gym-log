@@ -9,6 +9,7 @@ import { Sheet } from '../ui/Sheet'
 import { toast } from '../ui/toast'
 import { PartBlock } from '../components/PartBlock'
 import { DateJumpSheet } from '../components/Calendar'
+import { CultivationStrip } from '../components/CultivationStrip'
 import {
   addBodyPart,
   applyTemplateToDay,
@@ -82,6 +83,8 @@ export function TodayPage() {
           </div>
         }
       />
+
+      <CultivationStrip style={{ marginTop: 12 }} />
 
       {/* 今日概览 */}
       <Card style={{ marginTop: 14, padding: 14 }}>
