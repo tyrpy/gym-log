@@ -23,11 +23,11 @@ export function CultivationStrip({ style }: { style?: CSSProperties }) {
         display: 'flex',
         alignItems: 'center',
         gap: 11,
-        padding: '11px 12px',
-        borderRadius: R.md,
+        padding: '12px 14px',
+        borderRadius: R.lg,
         background: C.surface,
         border: `1px solid ${C.border}`,
-        boxShadow: '0 1px 0 rgba(90,78,58,.05)',
+        boxShadow: '0 1px 2px rgba(64,51,32,.04)',
         color: C.text,
         ...style,
       }}
@@ -57,7 +57,7 @@ export function CultivationStrip({ style }: { style?: CSSProperties }) {
           style={{
             height: 3,
             borderRadius: 0,
-            background: '#e2d8c3',
+            background: C.border,
             overflow: 'hidden',
             margin: '6px 0 5px',
           }}

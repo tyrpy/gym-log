@@ -95,7 +95,7 @@ export function RestTimerProvider({ children }: { children: ReactNode }) {
               pointerEvents: 'auto',
               width: '100%',
               maxWidth: 420,
-              background: '#1a1e24',
+              background: '#211e18',
               color: '#fff',
               borderRadius: 16,
               boxShadow: SHADOW.raised,

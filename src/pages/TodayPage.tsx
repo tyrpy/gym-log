@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { BODY_PARTS, BODY_PART_MAP } from '../data/exercises'
 import { PART_COLORS } from '../data/details'
-import { C, R } from '../ui/tokens'
+import { C, FONT, R } from '../ui/tokens'
 import { Icon } from '../ui/Icon'
 import { Page, PageHeader, SectionTitle, Stat } from '../ui/layout'
 import { Button, Card } from '../ui/base'
@@ -57,6 +57,7 @@ export function TodayPage() {
   return (
     <Page scenery>
       <PageHeader
+        tone={C.accent}
         title={
           <button
             onClick={() => setJumpOpen(true)}
@@ -84,15 +85,26 @@ export function TodayPage() {
         }
       />
 
-      <CultivationStrip style={{ marginTop: 12 }} />
-
-      {/* 今日概览 */}
-      <Card style={{ marginTop: 14, padding: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary }}>
-            {parts.length > 0 ? '本次训练' : '还没开始'}
+      {/* 今日主卡：概览 + 主操作 */}
+      <Card style={{ marginTop: 14, padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: C.muted, letterSpacing: 1.2 }}>
+              {isToday ? '训练概览' : '补记训练'}
+            </div>
+            <div
+              style={{
+                fontFamily: FONT.kai,
+                fontSize: 21,
+                fontWeight: 700,
+                letterSpacing: 0.5,
+                marginTop: 2,
+              }}
+            >
+              {parts.length > 0 ? '本次训练' : '今天练点什么？'}
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', paddingTop: 2 }}>
             {parts.map((p) => (
               <span
                 key={p}
@@ -110,30 +122,59 @@ export function TodayPage() {
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Stat plain label="动作" value={partCount(day)} unit="个" />
-          <Stat plain label="组数" value={setCount} unit="组" />
-          <Stat plain label="完成" value={doneCount} unit="组" tone={C.success} />
-          <Stat plain label="容量" value={fmtNumber(volume)} unit="kg" />
+
+        {parts.length > 0 ? (
+          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            <Stat plain first label="动作" value={partCount(day)} unit="个" />
+            <Stat plain label="组数" value={setCount} unit="组" />
+            <Stat plain label="完成" value={doneCount} unit="组" tone={C.success} />
+            <Stat plain label="容量" value={fmtNumber(volume)} unit="kg" />
+          </div>
+        ) : (
+          <p style={{ color: C.muted, fontSize: 12.5, lineHeight: 1.65, margin: '8px 0 0' }}>
+            先选今天练的部位，再挑动作；打勾完成的组会自动开始休息计时。
+          </p>
+        )}
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+          <Button variant="primary" full onClick={() => setAddPartOpen(true)} size="lg">
+            <Icon name="plus" size={18} />
+            记录部位
+          </Button>
+          <Button
+            size="lg"
+            onClick={() => setQuickOpen(true)}
+            title="模板 / 复制上次训练"
+            ariaLabel="模板与复制上次训练"
+            style={{ flex: 'none', width: 52, padding: 0 }}
+          >
+            <Icon name="list" size={19} />
+          </Button>
         </div>
+
+        {parts.length === 0 && lastSessionDate ? (
+          <button
+            onClick={() => {
+              update((d) => shiftLastSessionToDate(d, date))
+              toast('已复制上次训练，可直接改重量', 'success')
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              marginTop: 12,
+              fontSize: 12.5,
+              color: C.info,
+              fontWeight: 600,
+            }}
+          >
+            <Icon name="copy" size={14} />
+            复制上次训练（{formatDateShort(lastSessionDate)}）
+          </button>
+        ) : null}
       </Card>
 
-      {/* 操作区 */}
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        <Button variant="primary" full onClick={() => setAddPartOpen(true)} size="lg">
-          <Icon name="plus" size={18} />
-          记录部位
-        </Button>
-        <Button
-          size="lg"
-          onClick={() => setQuickOpen(true)}
-          title="模板 / 复制上次训练"
-          style={{ flex: 'none', whiteSpace: 'nowrap', padding: '0 16px' }}
-        >
-          <Icon name="list" size={18} />
-          模板
-        </Button>
-      </div>
+      <CultivationStrip style={{ marginTop: 12 }} />
 
       {/* 明细 */}
       {parts.length > 0 ? (
@@ -154,35 +195,7 @@ export function TodayPage() {
             <DayNote date={date} />
           </div>
         </>
-      ) : (
-        <div
-          style={{
-            marginTop: 18,
-            background: C.surface,
-            border: `1px dashed ${C.borderStrong}`,
-            borderRadius: R.lg,
-            padding: '26px 20px',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: 15, fontWeight: 650 }}>今天练点什么？</div>
-          <p style={{ color: C.muted, fontSize: 13, lineHeight: 1.65, maxWidth: 300, margin: '6px auto 14px' }}>
-            点「记录部位」开始。先选今天练的部位，再挑动作，一组一组填重量和次数；打勾即完成并自动开始休息计时。
-          </p>
-          {lastSessionDate ? (
-            <Button
-              variant="soft"
-              onClick={() => {
-                update((d) => shiftLastSessionToDate(d, date))
-                toast('已复制上次训练，可直接改重量', 'success')
-              }}
-            >
-              <Icon name="copy" size={15} />
-              复制上次（{formatDateShort(lastSessionDate)}）
-            </Button>
-          ) : null}
-        </div>
-      )}
+      ) : null}
 
       {/* 选部位 */}
       <Sheet open={addPartOpen} onClose={() => setAddPartOpen(false)} title="今天练哪些部位？" subtitle="可多选，分别记录">
@@ -396,9 +409,9 @@ function DayArrow({ dir, date, onGo }: { dir: 'prev' | 'next'; date: string; onG
       disabled={disabled}
       onClick={() => onGo(nextDate)}
       style={{
-        width: 34,
-        height: 34,
-        borderRadius: 10,
+        width: 36,
+        height: 36,
+        borderRadius: 12,
         border: `1px solid ${C.border}`,
         background: C.surface,
         color: disabled ? C.border : C.textSecondary,

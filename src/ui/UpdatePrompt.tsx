@@ -69,7 +69,7 @@ export function UpdatePrompt() {
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          background: '#1a1e24',
+          background: '#211e18',
           color: '#fff',
           borderRadius: 14,
           padding: '10px 12px 10px 14px',

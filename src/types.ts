@@ -91,6 +91,42 @@ export interface DayLog {
   updatedAt: number
 }
 
+/** 修为分类明细（旧规则结算与之后的新规则共用同一结构） */
+export interface CultivationBreakdown {
+  daily: number
+  sets: number
+  volume: number
+  pr: number
+  streak: number
+}
+
+/** 旧规则结算时的累计统计，用于和之后的新规则相加 */
+export interface CultivationSnapshot {
+  days: number
+  sets: number
+  volume: number
+  prCount: number
+}
+
+/**
+ * 修为结算状态。
+ *
+ * 修为由历史记录推导，但规则会演进。为了让旧记录不被新规则重新解释，
+ * 迁移时把 cutoff 之前的历史按旧规则一次性算成「已结算修为」冻结下来；
+ * cutoff 当天及以后按当前规则实时计算。
+ */
+export interface CultivationData {
+  version: 2
+  /** 从此日期起按新规则计算（本地 'YYYY-MM-DD'）；之前的日期已冻结 */
+  cutoff: string
+  /** 冻结期总修为 */
+  settledXp: number
+  /** 冻结期分类明细 */
+  settledBreakdown: CultivationBreakdown
+  /** 冻结期的累计统计 */
+  settledStats: CultivationSnapshot
+}
+
 /** 训练模板：把一套「部位+动作」存下来复用 */
 export interface WorkoutTemplate {
   id: string
@@ -109,6 +145,8 @@ export interface AppData {
   customExercises: Exercise[]
   /** 训练模板 */
   templates: WorkoutTemplate[]
+  /** 修为结算状态（旧记录冻结 + 新规则起点） */
+  cultivation: CultivationData
   /** 用户偏好 */
   settings: {
     unit: 'kg'

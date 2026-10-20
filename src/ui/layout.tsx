@@ -1,12 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { C, MAXW, R } from './tokens'
+import { C, FONT, MAXW, R } from './tokens'
 import { Icon } from './Icon'
 import { InkScenery } from '../components/InkScenery'
 
 /** 页面外层：统一宽度与留白；桌面端居中成"手机面板" */
 export function Page({
   children,
-  bottomPad = 118,
+  bottomPad = 112,
   scenery = false,
 }: {
   children: ReactNode
@@ -23,7 +23,7 @@ export function Page({
           zIndex: 1,
           maxWidth: MAXW,
           margin: '0 auto',
-          padding: `0 16px ${bottomPad}px`,
+          padding: `0 18px ${bottomPad}px`,
           minHeight: '100dvh',
         }}
       >
@@ -39,12 +39,15 @@ export function PageHeader({
   subtitle,
   right,
   left,
+  tone,
   sticky = true,
 }: {
   title: ReactNode
   subtitle?: ReactNode
   right?: ReactNode
   left?: ReactNode
+  /** 模块主题色：标题前的小圆点 */
+  tone?: string
   sticky?: boolean
 }) {
   return (
@@ -53,20 +56,40 @@ export function PageHeader({
         position: sticky ? 'sticky' : 'relative',
         top: 0,
         zIndex: 20,
-        margin: '0 -16px',
-        padding: 'calc(14px + env(safe-area-inset-top)) 16px 10px',
-        background: 'rgba(242,234,217,.88)',
-        backdropFilter: 'saturate(1.4) blur(12px)',
-        WebkitBackdropFilter: 'saturate(1.4) blur(12px)',
+        margin: '0 -18px',
+        padding: 'calc(16px + env(safe-area-inset-top)) 18px 12px',
+        background: tone
+          ? `linear-gradient(180deg, ${tone}10 0%, rgba(244,239,228,.9) 72%)`
+          : 'rgba(244,239,228,.88)',
+        backdropFilter: 'saturate(1.3) blur(16px)',
+        WebkitBackdropFilter: 'saturate(1.3) blur(16px)',
         borderBottom: `1px solid ${C.border}`,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {left}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: 2, lineHeight: 1.3 }}>{title}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {tone ? (
+              <span
+                aria-hidden="true"
+                style={{ width: 6, height: 6, borderRadius: 99, background: tone, flex: 'none' }}
+              />
+            ) : null}
+            <div
+              style={{
+                fontFamily: FONT.kai,
+                fontSize: 24,
+                fontWeight: 700,
+                letterSpacing: 0.5,
+                lineHeight: 1.25,
+              }}
+            >
+              {title}
+            </div>
+          </div>
           {subtitle ? (
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 2, letterSpacing: 0.8 }}>{subtitle}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3, letterSpacing: 0 }}>{subtitle}</div>
           ) : null}
         </div>
         {right}
@@ -91,7 +114,7 @@ export function SectionTitle({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 10,
-        margin: '18px 2px 8px',
+        margin: '20px 2px 9px',
         ...style,
       }}
     >
@@ -99,16 +122,17 @@ export function SectionTitle({
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 7,
-          fontSize: 13.5,
+          gap: 8,
+          fontFamily: FONT.kai,
+          fontSize: 14,
           fontWeight: 700,
           color: C.text,
-          letterSpacing: 3,
+          letterSpacing: 1.2,
         }}
       >
         <span
           aria-hidden="true"
-          style={{ width: 3, height: 13, background: C.accent, borderRadius: 0, display: 'inline-block' }}
+          style={{ width: 3, height: 12, background: C.accent, borderRadius: 2, display: 'inline-block' }}
         />
         {children}
       </div>
@@ -124,6 +148,7 @@ export function Stat({
   unit,
   tone,
   plain = false,
+  first = false,
 }: {
   label: string
   value: ReactNode
@@ -131,6 +156,8 @@ export function Stat({
   tone?: string
   /** 无边框样式：放在卡片里靠竖线分隔 */
   plain?: boolean
+  /** plain 模式下第一项不画左侧分隔线 */
+  first?: boolean
 }) {
   return (
     <div
@@ -144,7 +171,7 @@ export function Stat({
         position: 'relative',
       }}
     >
-      {plain ? (
+      {plain && !first ? (
         <span
           aria-hidden="true"
           style={{
@@ -156,7 +183,7 @@ export function Stat({
           }}
         />
       ) : null}
-      <div style={{ fontSize: 11, color: C.muted, fontWeight: 500, whiteSpace: 'nowrap', letterSpacing: 1.5 }}>
+      <div style={{ fontSize: 11, color: C.muted, fontWeight: 500, whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
         {label}
       </div>
       <div
@@ -214,18 +241,19 @@ export function SettingRow({
   return (
     <div
       onClick={onClick}
+      className="setting-row"
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        padding: '13px 14px',
+        padding: '14px 16px',
         borderTop: `1px solid ${C.border}`,
         cursor: onClick ? 'pointer' : undefined,
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 14.5, fontWeight: 550 }}>{label}</div>
-        {desc ? <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2, lineHeight: 1.5 }}>{desc}</div> : null}
+        <div style={{ fontSize: 14, fontWeight: 550 }}>{label}</div>
+        {desc ? <div style={{ fontSize: 12, color: C.muted, marginTop: 2, lineHeight: 1.5 }}>{desc}</div> : null}
       </div>
       {control}
     </div>

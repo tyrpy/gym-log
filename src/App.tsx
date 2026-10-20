@@ -5,6 +5,7 @@ import { BottomNav } from './components/BottomNav'
 import { ToastHost } from './ui/toast'
 import { UndoHost } from './ui/Undo'
 import { UpdatePrompt } from './ui/UpdatePrompt'
+import { C } from './ui/tokens'
 import { TodayPage } from './pages/TodayPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ProfilePage } from './pages/ProfilePage'
@@ -16,7 +17,7 @@ const TrendsPage = lazy(() => import('./pages/TrendsPage').then((m) => ({ defaul
 
 function PageFallback() {
   return (
-    <div style={{ padding: '80px 20px', textAlign: 'center', color: '#8b94a3', fontSize: 13 }}>加载中…</div>
+    <div style={{ padding: '80px 20px', textAlign: 'center', color: C.muted, fontSize: 13 }}>加载中…</div>
   )
 }
 

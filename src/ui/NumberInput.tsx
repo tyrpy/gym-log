@@ -35,9 +35,9 @@ export function NumberInput({
         gap: 2,
         width,
         height: 36,
-        borderRadius: 9,
+        borderRadius: 10,
         border: `1px solid ${C.border}`,
-        background: C.surface,
+        background: C.surfaceAlt,
         paddingRight: suffix ? 6 : 0,
         ...style,
       }}
@@ -98,7 +98,7 @@ export function Stepper({
 const stepStyle: CSSProperties = {
   width: 30,
   height: 30,
-  borderRadius: 8,
+  borderRadius: 10,
   border: `1px solid ${C.border}`,
   background: C.surface,
   color: C.textSecondary,

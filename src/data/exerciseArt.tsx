@@ -10,6 +10,7 @@ import {
   limb,
   p,
   standing,
+  type FocusPoint,
   type Pose,
 } from '../components/FigureKit'
 
@@ -36,10 +37,13 @@ export interface Art {
   singleScale?: number
   /** 视角说明，只在详情大图中显示 */
   viewNote?: string
+  /** 卡片模式展示哪一帧，默认完成帧 */
+  cardFrame?: 'start' | 'end'
+  /** 动作方向箭头追踪的身体部位，默认近侧手 */
+  focus?: FocusPoint
 }
 
 const benchPose = (arm: 'top' | 'bottom'): Pose => {
-  const shoulder: [number, number] = [94, 112]
   return {
     pelvis: p(52, 114),
     chest: p(94, 114),
@@ -48,19 +52,21 @@ const benchPose = (arm: 'top' | 'bottom'): Pose => {
     arms:
       arm === 'top'
         ? [
-            limb(shoulder, p(99, 94), p(97, 76)),
+            limb(p(94, 112), p(99, 94), p(97, 76)),
             limb(p(90, 112), p(95, 95), p(93, 77)),
           ]
         : [
-            limb(shoulder, p(77, 104), p(96, 102)),
+            limb(p(94, 112), p(77, 104), p(96, 102)),
             limb(p(90, 112), p(73, 106), p(92, 104)),
           ],
   }
 }
 
-const barAtHands = (pose: Pose, x1 = 40, x2 = 148, plate = 1) => (
-  <Barbell y={pose.arms[1].c[1]} x1={x1} x2={x2} plate={plate} />
-)
+const barAtHands = (pose: Pose, plate = 1) => {
+  const x = (pose.arms[0].c[0] + pose.arms[1].c[0]) / 2
+  const y = (pose.arms[0].c[1] + pose.arms[1].c[1]) / 2
+  return <Barbell x={x} y={y} plate={plate} />
+}
 
 const dbsAtHands = (pose: Pose, size = 1.1) => (
   <>
@@ -71,6 +77,7 @@ const dbsAtHands = (pose: Pose, size = 1.1) => (
 
 export const EXERCISE_ART: Record<string, Art> = {
   'bench-press': {
+    cardFrame: 'start',
     start: benchPose('top'),
     end: benchPose('bottom'),
     back: () => <Bench x1={26} y1={120} x2={126} y2={120} />,
@@ -78,6 +85,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'db-bench': {
+    cardFrame: 'start',
     start: benchPose('top'),
     end: benchPose('bottom'),
     back: () => <Bench x1={26} y1={120} x2={126} y2={120} />,
@@ -85,6 +93,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   squat: {
+    focus: 'pelvis',
     start: {
       pelvis: p(78, 108),
       chest: p(78, 68),
@@ -108,12 +117,13 @@ export const EXERCISE_ART: Record<string, Art> = {
     back: (frame) => (
       <>
         <Floor y={167} />
-        <Barbell y={frame === 'start' ? 80 : 100} x1={36} x2={124} plate={0.9} />
+        <Barbell x={frame === 'start' ? 80 : 81} y={frame === 'start' ? 74 : 92} plate={0.9} />
       </>
     ),
   },
 
   deadlift: {
+    cardFrame: 'start',
     start: {
       pelvis: p(72, 106),
       chest: p(88, 82),
@@ -130,14 +140,12 @@ export const EXERCISE_ART: Record<string, Art> = {
       head: p(80, 53),
       legs: [limb(p(76, 108), p(76, 139), p(76, 167)), limb(p(84, 108), p(84, 139), p(84, 167))],
       arms: [
-        limb(p(76, 70), p(78, 106), p(80, 142)),
-        limb(p(84, 70), p(86, 106), p(88, 142)),
+        limb(p(76, 70), p(78, 98), p(80, 120)),
+        limb(p(84, 70), p(86, 98), p(88, 120)),
       ],
     },
     back: () => <Floor y={167} />,
-    fore: (frame) => (
-      <Barbell y={frame === 'start' ? 156 : 144} x1={40} x2={140} plate={1.15} />
-    ),
+    fore: (_f, pose) => barAtHands(pose, 1.15),
   },
 
   rdl: {
@@ -159,10 +167,11 @@ export const EXERCISE_ART: Record<string, Art> = {
       ],
     },
     back: () => <Floor y={167} />,
-    fore: (_f, pose) => <Barbell y={pose.arms[1].c[1]} x1={42} x2={142} plate={1} />,
+    fore: (_f, pose) => barAtHands(pose),
   },
 
   'pull-up': {
+    focus: 'chest',
     start: {
       pelvis: p(80, 110),
       chest: p(80, 76),
@@ -177,16 +186,16 @@ export const EXERCISE_ART: Record<string, Art> = {
       ],
     },
     end: {
-      pelvis: p(80, 104),
-      chest: p(80, 74),
-      head: p(80, 60),
+      pelvis: p(80, 96),
+      chest: p(80, 64),
+      head: p(80, 50),
       legs: [
-        limb(p(76, 104), p(66, 126), p(64, 150)),
-        limb(p(84, 104), p(74, 126), p(72, 150)),
+        limb(p(76, 96), p(66, 118), p(64, 142)),
+        limb(p(84, 96), p(74, 118), p(72, 142)),
       ],
       arms: [
-        limb(p(76, 76), p(66, 64), p(74, 48)),
-        limb(p(84, 76), p(94, 64), p(86, 48)),
+        limb(p(76, 66), p(62, 60), p(74, 48)),
+        limb(p(84, 66), p(98, 60), p(86, 48)),
       ],
     },
     back: () => (
@@ -220,7 +229,7 @@ export const EXERCISE_ART: Record<string, Art> = {
       ],
     },
     back: () => <Floor y={167} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 138 : 110} x1={42} x2={142} plate={1} />,
+    fore: (_f, pose) => barAtHands(pose),
   },
 
   'barbell-curl': {
@@ -239,7 +248,7 @@ export const EXERCISE_ART: Record<string, Art> = {
       ],
     },
     back: () => <Floor y={167} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 112 : 80} x1={44} x2={136} plate={0.75} />,
+    fore: (_f, pose) => barAtHands(pose, 0.75),
   },
 
   'lateral-raise': {
@@ -330,7 +339,7 @@ export const EXERCISE_ART: Record<string, Art> = {
       ],
     },
     back: () => <Floor y={167} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 82 : 34} x1={46} x2={134} plate={0.85} />,
+    fore: (_f, pose) => barAtHands(pose, 0.85),
   },
 
   'tricep-pushdown': {
@@ -357,6 +366,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'incline-bench': {
+    cardFrame: 'start',
     start: {
       pelvis: p(46, 124),
       chest: p(100, 102),
@@ -372,11 +382,12 @@ export const EXERCISE_ART: Record<string, Art> = {
       arms: [limb(p(100, 100), p(82, 96), p(102, 94)), limb(p(96, 100), p(78, 98), p(98, 96))],
     },
     back: () => <Bench x1={30} y1={128} x2={120} y2={98} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 66 : 94} x1={42} x2={148} plate={0.95} />,
+    fore: (_f, pose) => barAtHands(pose, 0.95),
   },
 
   'db-fly': {
     front: true,
+    cardFrame: 'start',
     viewNote: '俯视',
     start: {
       pelvis: p(62, 84),
@@ -394,8 +405,8 @@ export const EXERCISE_ART: Record<string, Art> = {
       head: p(114, 84),
       legs: [limb(p(58, 80), p(40, 80), p(24, 80)), limb(p(58, 88), p(40, 88), p(24, 88))],
       arms: [
-        limb(p(90, 76), p(94, 52), p(94, 30)),
-        limb(p(90, 92), p(94, 116), p(94, 138)),
+        limb(p(90, 76), p(104, 70), p(96, 82)),
+        limb(p(90, 92), p(104, 98), p(96, 86)),
       ],
     },
     back: () => (
@@ -496,7 +507,7 @@ export const EXERCISE_ART: Record<string, Art> = {
         <line x1={20} y1={22} x2={80} y2={frame === 'start' ? 50 : 94} stroke={ART.cable} strokeWidth={1.8} strokeDasharray="3 2" />
       </g>
     ),
-    fore: (frame) => <Barbell y={frame === 'start' ? 50 : 94} x1={48} x2={112} plate={0.55} />,
+    fore: (_f, pose) => barAtHands(pose, 0.55),
   },
 
   'db-row': {
@@ -552,6 +563,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'front-squat': {
+    focus: 'pelvis',
     start: {
       pelvis: p(78, 108),
       chest: p(78, 68),
@@ -567,10 +579,11 @@ export const EXERCISE_ART: Record<string, Art> = {
       arms: [limb(p(76, 92), p(92, 102), p(82, 88)), limb(p(86, 92), p(102, 102), p(92, 88))],
     },
     back: () => <Floor y={167} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 66 : 88} x1={38} x2={118} plate={0.85} />,
+    fore: (_f, pose) => barAtHands(pose, 0.85),
   },
 
   'leg-press': {
+    focus: 'foot1',
     start: {
       pelvis: p(48, 124),
       chest: p(64, 100),
@@ -598,18 +611,19 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'leg-curl': {
+    focus: 'foot1',
     start: {
       pelvis: p(58, 118),
       chest: p(94, 118),
       head: p(112, 112),
-      legs: [limb(p(54, 118), p(34, 140), p(22, 162)), limb(p(62, 118), p(42, 140), p(30, 162))],
+      legs: [limb(p(54, 118), p(30, 120), p(22, 158)), limb(p(62, 118), p(38, 120), p(30, 158))],
       arms: [limb(p(94, 118), p(106, 126), p(110, 132)), limb(p(88, 118), p(100, 128), p(104, 134))],
     },
     end: {
       pelvis: p(58, 118),
       chest: p(94, 118),
       head: p(112, 112),
-      legs: [limb(p(54, 118), p(36, 134), p(58, 102)), limb(p(62, 118), p(44, 134), p(66, 104))],
+      legs: [limb(p(54, 118), p(30, 120), p(58, 98)), limb(p(62, 118), p(38, 120), p(66, 100))],
       arms: [limb(p(94, 118), p(106, 126), p(110, 132)), limb(p(88, 118), p(100, 128), p(104, 134))],
     },
     back: () => <Bench x1={24} y1={120} x2={122} y2={120} />,
@@ -621,6 +635,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'leg-extension': {
+    focus: 'foot1',
     start: {
       pelvis: p(52, 124),
       chest: p(66, 94),
@@ -652,6 +667,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   lunge: {
+    focus: 'pelvis',
     start: {
       ...standing(),
       arms: [limb(p(76, 70), p(78, 106), p(80, 120)), limb(p(84, 70), p(86, 106), p(88, 120))],
@@ -673,6 +689,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   'calf-raise': {
+    focus: 'foot1',
     start: {
       pelvis: p(80, 100),
       chest: p(80, 62),
@@ -798,10 +815,11 @@ export const EXERCISE_ART: Record<string, Art> = {
       arms: [limb(p(94, 112), p(78, 104), p(96, 94)), limb(p(90, 112), p(74, 106), p(92, 96))],
     },
     back: () => <Bench x1={26} y1={120} x2={126} y2={120} />,
-    fore: (frame) => <Barbell y={frame === 'start' ? 80 : 94} x1={68} x2={122} plate={0.55} />,
+    fore: (_f, pose) => barAtHands(pose, 0.55),
   },
 
   dip: {
+    focus: 'pelvis',
     start: {
       pelvis: p(80, 116),
       chest: p(80, 88),
@@ -828,6 +846,7 @@ export const EXERCISE_ART: Record<string, Art> = {
   },
 
   crunch: {
+    focus: 'chest',
     start: {
       pelvis: p(78, 150),
       chest: p(110, 146),
@@ -837,15 +856,16 @@ export const EXERCISE_ART: Record<string, Art> = {
     },
     end: {
       pelvis: p(78, 150),
-      chest: p(108, 136),
-      head: p(120, 128),
+      chest: p(106, 132),
+      head: p(118, 122),
       legs: [limb(p(74, 150), p(54, 132), p(52, 158)), limb(p(82, 150), p(62, 132), p(60, 158))],
-      arms: [limb(p(108, 136), p(100, 126), p(112, 122)), limb(p(104, 136), p(96, 128), p(108, 124))],
+      arms: [limb(p(106, 132), p(98, 122), p(110, 118)), limb(p(102, 132), p(94, 124), p(106, 120))],
     },
     back: () => <Mat y={158} x1={40} x2={140} />,
   },
 
   'hanging-leg-raise': {
+    focus: 'foot1',
     start: {
       pelvis: p(80, 112),
       chest: p(80, 80),

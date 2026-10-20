@@ -11,6 +11,7 @@ interface ButtonProps {
   disabled?: boolean
   style?: CSSProperties
   title?: string
+  ariaLabel?: string
   type?: 'button' | 'submit'
 }
 
@@ -23,16 +24,17 @@ export function Button({
   disabled,
   style,
   title,
+  ariaLabel,
   type = 'button',
 }: ButtonProps) {
   const sizes = {
-    sm: { padding: '6px 12px', fontSize: 13, borderRadius: 10, height: 32 },
-    md: { padding: '9px 16px', fontSize: 14.5, borderRadius: 12, height: 40 },
-    lg: { padding: '13px 20px', fontSize: 16, borderRadius: 14, height: 50 },
+    sm: { padding: '6px 12px', fontSize: 13, borderRadius: 10, height: 34 },
+    md: { padding: '10px 16px', fontSize: 14, borderRadius: 12, height: 42 },
+    lg: { padding: '14px 20px', fontSize: 15.5, borderRadius: 16, height: 52 },
   }[size]
 
   const variants: Record<string, CSSProperties> = {
-    primary: { background: C.accent, color: '#fff', boxShadow: '0 1px 2px rgba(230,81,46,.25)' },
+    primary: { background: C.accent, color: '#fff', boxShadow: '0 2px 6px rgba(166,58,43,.18)' },
     secondary: { background: C.surface, color: C.text, border: `1px solid ${C.border}` },
     ghost: { background: 'transparent', color: C.textSecondary },
     danger: { background: C.surface, color: C.danger, border: `1px solid ${C.border}` },
@@ -43,6 +45,7 @@ export function Button({
     <button
       type={type}
       title={title}
+      aria-label={ariaLabel}
       disabled={disabled}
       onClick={onClick}
       style={{
@@ -52,6 +55,7 @@ export function Button({
         gap: 6,
         fontWeight: 600,
         lineHeight: 1,
+        letterSpacing: 0,
         width: full ? '100%' : undefined,
         opacity: disabled ? 0.45 : 1,
         transition: 'transform .08s ease, background .15s ease, opacity .15s ease',
@@ -166,7 +170,7 @@ export function Chip({
         gap: 6,
         padding: '7px 13px',
         borderRadius: R.pill,
-        fontSize: 14,
+        fontSize: 13.5,
         fontWeight: active ? 600 : 500,
         color: active ? '#fff' : color ? accent : C.textSecondary,
         background: active ? accent : color ? `${accent}12` : C.surface,
@@ -202,7 +206,7 @@ export function Segmented<T extends string>({
         gap: 2,
         background: C.surfaceAlt,
         border: `1px solid ${C.border}`,
-        borderRadius: 10,
+        borderRadius: 12,
         ...style,
       }}
     >
@@ -211,13 +215,13 @@ export function Segmented<T extends string>({
           key={o.value}
           onClick={() => onChange(o.value)}
           style={{
-            padding: '5px 12px',
-            borderRadius: 8,
-            fontSize: 13,
+            padding: '6px 13px',
+            borderRadius: 9,
+            fontSize: 12.5,
             fontWeight: value === o.value ? 600 : 500,
             color: value === o.value ? C.text : C.muted,
             background: value === o.value ? C.surface : 'transparent',
-            boxShadow: value === o.value ? '0 1px 2px rgba(16,24,40,.08)' : 'none',
+            boxShadow: value === o.value ? '0 1px 2px rgba(64,51,32,.10)' : 'none',
           }}
         >
           {o.label}
@@ -246,7 +250,7 @@ export function Switch({
         width: 48,
         height: 28,
         borderRadius: 999,
-        background: checked ? C.accent : '#d9dde4',
+        background: checked ? C.accent : '#d8d1c1',
         position: 'relative',
         transition: 'background .18s ease',
         flex: 'none',
@@ -289,12 +293,12 @@ export function Field({
 
 export const inputStyle: CSSProperties = {
   width: '100%',
-  height: 42,
-  padding: '0 12px',
-  borderRadius: 10,
+  height: 44,
+  padding: '0 13px',
+  borderRadius: 12,
   border: `1px solid ${C.border}`,
   background: C.surface,
-  fontSize: 15,
+  fontSize: 14.5,
   outline: 'none',
 }
 
@@ -324,7 +328,7 @@ export function EmptyState({
         style={{
           width: 54,
           height: 54,
-          borderRadius: 16,
+          borderRadius: 18,
           background: C.surface,
           border: `1px solid ${C.border}`,
           display: 'flex',

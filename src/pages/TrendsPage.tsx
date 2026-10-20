@@ -45,6 +45,7 @@ export function TrendsPage() {
   return (
     <Page>
       <PageHeader
+        tone={C.success}
         title="进步趋势"
         subtitle={history.length > 0 ? `${history.length} 次记录` : '记录几次后就能看到趋势'}
         right={
@@ -83,20 +84,12 @@ export function TrendsPage() {
                   {activeEx ? BODY_PART_MAP[activeEx.bodyPart].name : '自定义动作'}
                 </div>
               </div>
-              <Segmented
-                value={metric}
-                onChange={setMetric}
-                options={[
-                  { value: 'weight', label: '重量' },
-                  { value: 'volume', label: '容量' },
-                ]}
-              />
             </div>
 
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <Stat label="最新" value={fmtNumber(latest?.bestWeight ?? 0)} unit="kg" />
-              <Stat label="最好" value={fmtNumber(best)} unit="kg" tone={C.accent} />
-              <Stat label="次数" value={history.length} unit="次" />
+              <Stat plain first label="最新" value={fmtNumber(latest?.bestWeight ?? 0)} unit="kg" />
+              <Stat plain label="最好" value={fmtNumber(best)} unit="kg" tone={C.accent} />
+              <Stat plain label="次数" value={history.length} unit="次" />
             </div>
             {delta !== 0 ? (
               <div
@@ -123,9 +116,14 @@ export function TrendsPage() {
           {/* 图表 */}
           <SectionTitle
             right={
-              <span style={{ fontSize: 11.5, color: C.muted }}>
-                {metric === 'weight' ? '每次的最重一组' : '每次总容量'}
-              </span>
+              <Segmented
+                value={metric}
+                onChange={setMetric}
+                options={[
+                  { value: 'weight', label: '重量' },
+                  { value: 'volume', label: '容量' },
+                ]}
+              />
             }
           >
             {metric === 'weight' ? '重量变化' : '容量变化'}

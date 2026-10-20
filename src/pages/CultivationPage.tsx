@@ -7,6 +7,7 @@ import { Sheet } from '../ui/Sheet'
 import { CultivationSeal, SERIF_FONT } from '../components/CultivationSeal'
 import { useGym } from '../state/gym'
 import {
+  CULTIVATION_RULES,
   getCultivation,
   LEVELS,
   MAX_LEVEL,
@@ -14,7 +15,7 @@ import {
   STREAK_MILESTONES,
   type CultivationStats,
 } from '../lib/cultivation'
-import { fmtNumber } from '../lib/utils'
+import { fmtNumber, formatDateCN } from '../lib/utils'
 
 const GOLD = '#a63a2b'
 
@@ -31,9 +32,9 @@ export function CultivationPage() {
             aria-label="返回"
             onClick={() => go('me')}
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
+              width: 36,
+              height: 36,
+              borderRadius: 12,
               border: `1px solid ${C.border}`,
               background: C.surface,
               color: C.textSecondary,
@@ -63,8 +64,15 @@ export function CultivationPage() {
       </div>
 
       <div style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.7, margin: '14px 2px 0' }}>
-        修为由历史训练自动推算，不会修改你的原始记录。连续天数按自然日计算，断一天会重置连击；
-        已获得的称号会永久保留。
+        修为由历史训练自动推算，不会修改你的原始记录。只有打勾「完成」的组才计入修为，复制模板或预填但没做的组不计；
+        新规则下连续天数也要求当天至少完成一组。已获得的称号会永久保留。
+        {stats.settledXp > 0 ? (
+          <>
+            <br />
+            {formatDateCN(stats.cutoff)} 之前的 {fmtNumber(stats.settledXp)} 修为已按旧规则一次性结算并冻结，
+            之后按新规则计算。
+          </>
+        ) : null}
       </div>
 
       <Sheet
@@ -276,8 +284,8 @@ function RealmPath({ stats }: { stats: CultivationStats }) {
           display: 'flex',
           gap: 8,
           overflowX: 'auto',
-          margin: '0 -16px',
-          padding: '0 16px 4px',
+          margin: '0 -18px',
+          padding: '0 18px 4px',
           scrollSnapType: 'x mandatory',
         }}
       >
@@ -308,7 +316,7 @@ function RealmPath({ stats }: { stats: CultivationStats }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <CultivationSeal char={r.char} color={r.color} size={32} dim={locked} />
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: current ? r.color : C.text }}>{r.name}</div>
+                  <div style={{ fontFamily: SERIF_FONT, letterSpacing: 1, fontSize: 13.5, fontWeight: 700, color: current ? r.color : C.text }}>{r.name}</div>
                   <div style={{ fontSize: 9.5, color: C.muted }}>
                     {r.startLevel === r.endLevel ? `第 ${r.startLevel} 级` : `第 ${r.startLevel}–${r.endLevel} 级`}
                   </div>
@@ -352,7 +360,7 @@ function StreakCard({ stats }: { stats: CultivationStats }) {
 
   return (
     <>
-      <SectionTitle right={<span style={{ fontSize: 11.5, color: C.muted }}>自然日连续</span>}>
+      <SectionTitle right={<span style={{ fontSize: 11.5, color: C.muted }}>完成 ≥1 组</span>}>
         连续修炼
       </SectionTitle>
       <Card style={{ padding: 14 }}>
@@ -472,18 +480,43 @@ function StreakCard({ stats }: { stats: CultivationStats }) {
 }
 
 function Breakdown({ stats }: { stats: CultivationStats }) {
-  const { breakdown, totalXp, trainingDays, totalSets, totalVolume, prCount } = stats
+  const { breakdown, totalXp, settledXp, trainingDays, totalSets, totalVolume, prCount } = stats
   const rows = [
-    { label: '每日修炼', value: breakdown.daily, note: `80 × ${trainingDays} 天`, color: '#3f9d6b' },
-    { label: '记录组数', value: breakdown.sets, note: `每组 +6，单日上限 36`, color: '#2f7fd4' },
-    { label: '训练容量', value: breakdown.volume, note: `每 200kg +1，单日上限 40`, color: '#c9922e' },
-    { label: '突破纪录', value: breakdown.pr, note: `每个动作破重量纪录 +40，单日上限 120`, color: '#d24b4b' },
-    { label: '连续奖励', value: breakdown.streak, note: '连击里程碑一次性奖励', color: '#8e5bd9' },
+    {
+      label: '每日修炼',
+      value: breakdown.daily,
+      note: `每个训练日 +${CULTIVATION_RULES.dailyBase}（至少完成 1 组）`,
+      color: C.success,
+    },
+    {
+      label: '完成组数',
+      value: breakdown.sets,
+      note: `每完成一组 +${CULTIVATION_RULES.perSet}，单日上限 ${CULTIVATION_RULES.maxSetXp}`,
+      color: C.info,
+    },
+    {
+      label: '训练容量',
+      value: breakdown.volume,
+      note: `每 ${CULTIVATION_RULES.volumeStep}kg +1，单日上限 ${CULTIVATION_RULES.maxVolumeXp}`,
+      color: C.warning,
+    },
+    {
+      label: '突破纪录',
+      value: breakdown.pr,
+      note: `每个动作刷新重量纪录 +${CULTIVATION_RULES.perPr}，单日上限 ${CULTIVATION_RULES.maxPrXp}`,
+      color: C.accent,
+    },
+    {
+      label: '连续奖励',
+      value: breakdown.streak,
+      note: '连击里程碑一次性奖励',
+      color: '#7a4a63',
+    },
   ]
 
   return (
     <>
-      <SectionTitle right={<span style={{ fontSize: 11.5, color: C.muted }}>自动计算</span>}>
+      <SectionTitle right={<span style={{ fontSize: 11.5, color: C.muted }}>{settledXp > 0 ? '含旧规则结算' : '自动计算'}</span>}>
         修为明细
       </SectionTitle>
       <Card style={{ padding: 14 }}>
@@ -539,6 +572,12 @@ function Breakdown({ stats }: { stats: CultivationStats }) {
           }}
         >
           训练 {trainingDays} 天 · {totalSets} 组 · {fmtNumber(totalVolume)} kg · {prCount} 次破纪录
+          {settledXp > 0 ? (
+            <>
+              <br />
+              其中 {fmtNumber(settledXp)} 修为来自旧规则冻结期，不随编辑变化。
+            </>
+          ) : null}
         </div>
       </Card>
     </>
@@ -562,7 +601,7 @@ function LevelTable({ stats }: { stats: CultivationStats }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
               <CultivationSeal char={r.char} color={r.color} size={30} dim={locked} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: locked ? C.textSecondary : r.color }}>
+                <div style={{ fontFamily: SERIF_FONT, letterSpacing: 1, fontSize: 14, fontWeight: 700, color: locked ? C.textSecondary : r.color }}>
                   {r.name}境
                 </div>
                 <div style={{ fontSize: 10.5, color: C.muted }}>
@@ -610,7 +649,7 @@ function LevelTable({ stats }: { stats: CultivationStats }) {
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ fontSize: 12.5, fontWeight: current ? 700 : 550, color: current ? r.color : C.text }}>
+                        <span style={{ fontFamily: SERIF_FONT, fontSize: 12.5, fontWeight: current ? 700 : 550, color: current ? r.color : C.text }}>
                           {l.name}
                         </span>
                         {current ? (
@@ -645,7 +684,8 @@ function LevelTable({ stats }: { stats: CultivationStats }) {
       })}
 
       <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.7 }}>
-        满级共需 {maxXp.toLocaleString('zh-CN')} 修为。按每天一次训练、约 150–200 修为估算，是一条以年为单位的长期修行线。
+        满级共需 {maxXp.toLocaleString('zh-CN')} 修为。按每周 4 练、每次约 120 修为估算，大约需要三年；
+        练得越勤、纪录破得越多，走得越快。只有打勾完成的组才计入修为。
       </div>
     </div>
   )

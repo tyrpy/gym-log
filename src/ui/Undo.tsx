@@ -49,7 +49,7 @@ export function UndoHost() {
           display: 'flex',
           alignItems: 'center',
           gap: 14,
-          background: '#1a1e24',
+          background: '#211e18',
           color: '#fff',
           borderRadius: 999,
           padding: '7px 8px 7px 16px',

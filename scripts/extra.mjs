@@ -76,8 +76,10 @@ try {
   check('撤销后恢复', await evaluate(`document.body.innerText.includes('杠铃卧推')`))
 
   // 2) 模板套用（会覆盖当天 → 应出现深蹲）
-  await clickText('模板', true)
-  await sleep(500)
+  await evaluate(
+    `(() => { const b = [...document.querySelectorAll('button')].find(x => (x.getAttribute('aria-label') || '').includes('模板与复制')); if (!b) return false; b.click(); return true })()`,
+  )
+  await sleep(700)
   await clickText('套用', true)
   await sleep(700)
   check('模板已套用', await evaluate(`document.body.innerText.includes('深蹲')`))
@@ -93,12 +95,12 @@ try {
   await send('Page.reload'); await sleep(1600)
   check('刷新后模板记录保留', await evaluate(`document.body.innerText.includes('深蹲')`))
 
-  // 5) 推荐模板
-  await evaluate(`document.querySelectorAll('nav button')[3].click()`)
-  await sleep(900)
+  // 5) 推荐模板（用 URL 直达「我的」，避免依赖导航顺序）
+  await send('Page.navigate', { url: url + (url.includes('?') ? '&' : '?') + 'page=me' })
+  await sleep(1800)
   const before = await evaluate(`document.body.innerText.includes('推日 · 胸肩三头')`)
   await clickText('载入推荐模板')
-  await sleep(700)
+  await sleep(900)
   const after = await evaluate(`document.body.innerText.includes('推日 · 胸肩三头') && document.body.innerText.includes('拉日 · 背二头') && document.body.innerText.includes('腿日 · 下肢')`)
   check('推荐模板可一键载入', !before && after, `before=${before} after=${after}`)
 

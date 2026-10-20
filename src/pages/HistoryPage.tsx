@@ -13,8 +13,8 @@ import {
   daySetCount,
   dayVolume,
   loggedDates,
-  trainingStreak,
 } from '../lib/store'
+import { getCultivation } from '../lib/cultivation'
 import { fmtNumber, todayKey } from '../lib/utils'
 
 export function HistoryPage() {
@@ -29,49 +29,68 @@ export function HistoryPage() {
 
   const monthVolume = monthDates.reduce((s, d) => s + dayVolume(data.days[d]), 0)
   const monthSets = monthDates.reduce((s, d) => s + daySetCount(data.days[d]), 0)
-  const streak = trainingStreak(data)
+  const streak = useMemo(() => getCultivation(data).currentStreak, [data])
 
   const recent = [...dates].reverse().slice(0, 12)
+  const now = todayKey()
+  const isCurrentMonth = year === Number(now.slice(0, 4)) && month === Number(now.slice(5, 7)) - 1
 
   return (
     <Page>
-      <PageHeader title="训练历史" subtitle={`累计 ${dates.length} 个训练日 · 连续 ${streak} 天`} />
-
-      <Card style={{ marginTop: 14, padding: 14 }}>
-        <MonthCalendar
-          data={data}
-          year={year}
-          month={month}
-          selected={date}
-          onSelect={(d) => {
-            setDate(d)
-            setDetailDate(d)
-          }}
-          onMonthChange={(y, m) => {
-            setYear(y)
-            setMonth(m)
-          }}
-        />
-      </Card>
-
-      <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-        <Stat label={`${month + 1}月训练`} value={monthDates.length} unit="天" />
-        <Stat label="本月组数" value={monthSets} unit="组" />
-        <Stat label="本月容量" value={fmtNumber(monthVolume)} unit="kg" />
-      </div>
-
-      <SectionTitle
+      <PageHeader
+        tone={C.info}
+        title="训练历史"
+        subtitle={`累计 ${dates.length} 个训练日 · 连续完成 ${streak} 天`}
         right={
-          year !== Number(todayKey().slice(0, 4)) || month !== Number(todayKey().slice(5, 7)) - 1 ? (
+          isCurrentMonth ? null : (
             <button
               onClick={() => {
-                setYear(Number(todayKey().slice(0, 4)))
-                setMonth(Number(todayKey().slice(5, 7)) - 1)
+                setYear(Number(now.slice(0, 4)))
+                setMonth(Number(now.slice(5, 7)) - 1)
               }}
               style={{ fontSize: 12.5, color: C.info, fontWeight: 600 }}
             >
               回到本月
             </button>
+          )
+        }
+      />
+
+      <Card style={{ marginTop: 14, overflow: 'hidden' }}>
+        <div style={{ padding: 14 }}>
+          <MonthCalendar
+            data={data}
+            year={year}
+            month={month}
+            selected={date}
+            onSelect={(d) => {
+              setDate(d)
+              setDetailDate(d)
+            }}
+            onMonthChange={(y, m) => {
+              setYear(y)
+              setMonth(m)
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            padding: '12px 14px 14px',
+            borderTop: `1px solid ${C.border}`,
+          }}
+        >
+          <Stat plain first label={`${month + 1}月训练`} value={monthDates.length} unit="天" />
+          <Stat plain label="本月组数" value={monthSets} unit="组" />
+          <Stat plain label="本月容量" value={fmtNumber(monthVolume)} unit="kg" />
+        </div>
+      </Card>
+
+      <SectionTitle
+        right={
+          recent.length > 0 ? (
+            <span style={{ fontSize: 11.5, color: C.muted }}>最近 {recent.length} 次</span>
           ) : null
         }
       >
@@ -100,7 +119,7 @@ export function HistoryPage() {
                   background: C.surface,
                   border: `1px solid ${C.border}`,
                   borderRadius: R.md,
-                  padding: '11px 14px',
+                  padding: '12px 16px',
                   textAlign: 'left',
                 }}
               >

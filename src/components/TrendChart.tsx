@@ -45,7 +45,7 @@ export function TrendChart({ points, metric }: { points: TrendPoint[]; metric: '
     <div style={{ width: '100%', height: 210 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 14, bottom: 4, left: 4 }}>
-          <CartesianGrid stroke="#eceff3" strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid stroke={C.border} strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="label"
             tick={{ fontSize: 10.5, fill: C.muted }}
@@ -71,13 +71,13 @@ export function TrendChart({ points, metric }: { points: TrendPoint[]; metric: '
               return (
                 <div
                   style={{
-                    background: '#1a1e24',
+                    background: C.text,
                     color: '#fff',
-                    borderRadius: 10,
+                    borderRadius: 12,
                     padding: '8px 12px',
                     fontSize: 12,
                     lineHeight: 1.6,
-                    boxShadow: '0 6px 20px rgba(0,0,0,.18)',
+                    boxShadow: '0 6px 20px rgba(45,38,26,.18)',
                   }}
                 >
                   <div style={{ fontWeight: 700, marginBottom: 2 }}>{p.date}</div>

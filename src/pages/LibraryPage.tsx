@@ -75,96 +75,132 @@ export function LibraryPage() {
   return (
     <Page>
       <PageHeader
+        tone={C.warning}
         title="动作库"
         subtitle={`${library.length} 个动作 · 图示与分步做法`}
       />
 
-      <div style={{ marginTop: 14, position: 'relative' }}>
-        <Icon
-          name="search"
-          size={17}
-          style={{ position: 'absolute', left: 13, top: 13, color: C.muted }}
-        />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="搜索动作，如：卧推 / 划船 / 深蹲"
-          aria-label="搜索动作"
-          style={{ ...inputStyle, paddingLeft: 38, height: 44 }}
-        />
-        {q ? (
-          <button
-            aria-label="清空搜索"
-            onClick={() => setQ('')}
+      <div
+        style={{
+          marginTop: 14,
+          background: C.surface,
+          border: `1px solid ${C.border}`,
+          borderRadius: R.lg,
+          padding: '10px 12px 8px',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ position: 'relative' }}>
+          <Icon
+            name="search"
+            size={17}
+            style={{ position: 'absolute', left: 13, top: 12, color: C.muted }}
+          />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="搜索动作，如：卧推 / 划船 / 深蹲"
+            aria-label="搜索动作"
             style={{
-              position: 'absolute',
-              right: 10,
-              top: 10,
-              width: 24,
-              height: 24,
-              borderRadius: 999,
+              ...inputStyle,
+              paddingLeft: 38,
+              height: 42,
+              borderRadius: 10,
               background: C.surfaceAlt,
-              color: C.muted,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              border: 'none',
             }}
-          >
-            <Icon name="x" size={13} />
-          </button>
-        ) : null}
+          />
+          {q ? (
+            <button
+              aria-label="清空搜索"
+              onClick={() => setQ('')}
+              style={{
+                position: 'absolute',
+                right: 9,
+                top: 9,
+                width: 24,
+                height: 24,
+                borderRadius: 999,
+                background: C.surface,
+                color: C.muted,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Icon name="x" size={13} />
+            </button>
+          ) : null}
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            overflowX: 'auto',
+            margin: '10px -12px 0',
+            padding: '0 12px 2px',
+            scrollbarWidth: 'none',
+          }}
+        >
+          <Chip active={part === 'all'} onClick={() => setPart('all')} style={{ padding: '6px 12px', fontSize: 13 }}>
+            全部部位
+          </Chip>
+          {BODY_PARTS.map((p) => (
+            <Chip
+              key={p.id}
+              active={part === p.id}
+              color={p.color}
+              onClick={() => setPart(p.id)}
+              style={{ padding: '6px 12px', fontSize: 13 }}
+            >
+              {p.name}
+            </Chip>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            overflowX: 'auto',
+            margin: '8px -12px 0',
+            padding: '0 12px 2px',
+            scrollbarWidth: 'none',
+          }}
+        >
+          {EQUIPMENTS.map((eq) => (
+            <Chip
+              key={eq}
+              active={equip === eq}
+              onClick={() => setEquip(eq)}
+              style={{
+                padding: '4px 10px',
+                fontSize: 12,
+                background: equip === eq ? C.text : C.surfaceAlt,
+                color: equip === eq ? '#fff' : C.textSecondary,
+                border: `1px solid ${equip === eq ? C.text : C.border}`,
+              }}
+            >
+              {eq === 'all' ? '全部器械' : EQUIPMENT_LABEL[eq]}
+            </Chip>
+          ))}
+        </div>
       </div>
 
       <div
         style={{
           display: 'flex',
-          gap: 6,
-          overflowX: 'auto',
-          margin: '12px -16px 0',
-          padding: '0 16px 2px',
-          scrollbarWidth: 'none',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          margin: '12px 2px 0',
+          fontSize: 12,
+          color: C.muted,
         }}
       >
-        <Chip active={part === 'all'} onClick={() => setPart('all')} style={{ padding: '6px 12px', fontSize: 13 }}>
-          全部部位
-        </Chip>
-        {BODY_PARTS.map((p) => (
-          <Chip
-            key={p.id}
-            active={part === p.id}
-            color={p.color}
-            onClick={() => setPart(p.id)}
-            style={{ padding: '6px 12px', fontSize: 13 }}
-          >
-            {p.name}
-          </Chip>
-        ))}
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          gap: 6,
-          overflowX: 'auto',
-          margin: '8px -16px 0',
-          padding: '0 16px 2px',
-          scrollbarWidth: 'none',
-        }}
-      >
-        {EQUIPMENTS.map((eq) => (
-          <Chip
-            key={eq}
-            active={equip === eq}
-            onClick={() => setEquip(eq)}
-            style={{ padding: '4px 10px', fontSize: 12, background: equip === eq ? C.accent : C.surface }}
-          >
-            {eq === 'all' ? '全部器械' : EQUIPMENT_LABEL[eq]}
-          </Chip>
-        ))}
-      </div>
-
-      <div style={{ fontSize: 12, color: C.muted, margin: '12px 2px 0' }}>
-        找到 {list.length} 个动作 · 点卡片看做法
+        <span>找到 {list.length} 个动作</span>
+        <span>点卡片看做法</span>
       </div>
 
       {list.length === 0 ? (
@@ -184,7 +220,7 @@ export function LibraryPage() {
           </div>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10, marginTop: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, marginTop: 10 }}>
           {list.map((ex) => {
             const guide = EXERCISE_GUIDES[ex.id]
             const inToday = todayIds.has(ex.id)
@@ -204,7 +240,14 @@ export function LibraryPage() {
                 }}
               >
                 <div style={{ padding: 5, paddingBottom: 0, position: 'relative' }}>
-                  <ExerciseFigure id={ex.id} label={ex.name} showLabels={false} style={{ borderRadius: 10 }} />
+                  <ExerciseFigure
+                    id={ex.id}
+                    label={ex.name}
+                    variant="card"
+                    bodyPart={ex.bodyPart}
+                    showLabels={false}
+                    style={{ borderRadius: 10 }}
+                  />
                   {inToday ? (
                     <span
                       style={{
@@ -214,7 +257,7 @@ export function LibraryPage() {
                         fontSize: 9.5,
                         fontWeight: 700,
                         color: C.success,
-                        background: 'rgba(232,247,239,.94)',
+                        background: C.successSoft,
                         border: `1px solid ${C.success}33`,
                         padding: '1px 6px',
                         borderRadius: 999,
@@ -311,8 +354,14 @@ function ExerciseDetail({ ex }: { ex: Exercise }) {
   return (
     <div style={{ display: 'grid', gap: 14 }}>
       <div style={{ borderRadius: R.lg, overflow: 'hidden', border: `1px solid ${C.border}`, background: C.surface }}>
-        <ExerciseFigure id={ex.id} label={ex.name} />
+        <ExerciseFigure id={ex.id} label={ex.name} variant="detail" bodyPart={ex.bodyPart} />
       </div>
+
+      {guide ? (
+        <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.6, padding: '0 2px', marginTop: -8 }}>
+          淡色高亮为主要发力区域；双帧图中的虚线箭头表示动作方向。
+        </div>
+      ) : null}
 
       {guide ? (
         <>
@@ -396,7 +445,7 @@ function ExerciseDetail({ ex }: { ex: Exercise }) {
                   }}
                 >
                   <Icon name="check" size={14} style={{ color: C.success, flex: 'none', marginTop: 3 }} />
-                  <div style={{ fontSize: 13, lineHeight: 1.6, color: '#1c6b46' }}>{t}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, color: C.success }}>{t}</div>
                 </div>
               ))}
             </div>
@@ -418,7 +467,7 @@ function ExerciseDetail({ ex }: { ex: Exercise }) {
                   }}
                 >
                   <Icon name="x" size={13} style={{ color: C.warning, flex: 'none', marginTop: 3 }} />
-                  <div style={{ fontSize: 13, lineHeight: 1.6, color: '#7a5108' }}>{t}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, color: C.warning }}>{t}</div>
                 </div>
               ))}
             </div>

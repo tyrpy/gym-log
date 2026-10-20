@@ -12,6 +12,7 @@ import { toast } from '../ui/toast'
 import { useGym } from '../state/gym'
 import { InstallSheet, useInstallState } from '../ui/Install'
 import { CultivationStrip } from '../components/CultivationStrip'
+import { emptyCultivation } from '../lib/cultivation'
 import {
   addCustomExercise,
   addDefaultTemplates,
@@ -38,6 +39,7 @@ export function ProfilePage() {
   const [part, setPart] = useState<BodyPartId>('chest')
   const [equip, setEquip] = useState<Equipment>('machine')
   const fileRef = useRef<HTMLInputElement>(null)
+  const apkRef = useRef<HTMLAnchorElement>(null)
 
   const dates = useMemo(() => loggedDates(data), [data])
   const totalSets = dates.reduce((s, d) => s + daySetCount(data.days[d]), 0)
@@ -79,97 +81,16 @@ export function ProfilePage() {
 
   return (
     <Page>
-      <PageHeader title="我的" subtitle="动作库、模板、设置与数据" />
+      <PageHeader tone={C.textSecondary} title="我的" subtitle="训练档案、动作与设置" />
 
-      <Card style={{ marginTop: 14, padding: 14 }}>
+      <CultivationStrip style={{ marginTop: 14 }} />
+
+      <Card style={{ marginTop: 10, padding: 14 }}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Stat label="训练日" value={dates.length} unit="天" />
-          <Stat label="总组数" value={totalSets} unit="组" />
-          <Stat label="总容量" value={fmtNumber(totalVolume)} unit="kg" />
+          <Stat plain first label="训练日" value={dates.length} unit="天" />
+          <Stat plain label="总组数" value={totalSets} unit="组" />
+          <Stat plain label="总容量" value={fmtNumber(totalVolume)} unit="kg" />
         </div>
-      </Card>
-
-      <SectionTitle>修行境界</SectionTitle>
-      <CultivationStrip />
-
-      {/* 安装到手机 */}
-      <Card style={{ marginTop: 10, overflow: 'hidden' }}>
-        <button
-          onClick={() => setInstallOpen(true)}
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '13px 14px',
-            textAlign: 'left',
-          }}
-        >
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 11,
-              background: install.installed ? C.successSoft : C.accentSoft,
-              color: install.installed ? C.success : C.accent,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 'none',
-            }}
-          >
-            <Icon name={install.installed ? 'check' : 'download'} size={19} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 650 }}>
-              {install.installed ? '已安装到主屏幕' : '安装到手机主屏幕'}
-            </div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 1, lineHeight: 1.5 }}>
-              {install.installed ? '现在是从主屏幕启动的独立 App' : '像普通 App 一样打开，第一次加载后断网也能用'}
-            </div>
-          </div>
-          {install.installed ? null : <Icon name="right" size={16} style={{ color: C.muted }} />}
-        </button>
-      </Card>
-
-      {/* 安卓安装包 */}
-      <Card style={{ marginTop: 10, overflow: 'hidden' }}>
-        <a
-          href="./gym-log-tyrpy.apk"
-          download="gym-log-tyrpy.apk"
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '13px 14px',
-            textDecoration: 'none',
-            color: 'inherit',
-          }}
-        >
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 11,
-              background: C.infoSoft,
-              color: C.info,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 'none',
-            }}
-          >
-            <Icon name="download" size={19} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 650 }}>下载安卓安装包（APK）</div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 1, lineHeight: 1.5 }}>
-              约 4.7 MB · Android 7.0 以上 · 断网可用
-            </div>
-          </div>
-          <Icon name="right" size={16} style={{ color: C.muted }} />
-        </a>
       </Card>
 
       {/* 自定义动作 */}
@@ -191,11 +112,12 @@ export function ProfilePage() {
           data.customExercises.map((ex) => (
             <div
               key={ex.id}
+              className="setting-row"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 10,
-                padding: '11px 14px',
+                padding: '12px 16px',
                 borderTop: `1px solid ${C.border}`,
               }}
             >
@@ -246,11 +168,12 @@ export function ProfilePage() {
           data.templates.map((t) => (
             <div
               key={t.id}
+              className="setting-row"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 10,
-                padding: '11px 14px',
+                padding: '12px 16px',
                 borderTop: `1px solid ${C.border}`,
               }}
             >
@@ -318,9 +241,31 @@ export function ProfilePage() {
         />
       </Card>
 
-      {/* 数据 */}
-      <SectionTitle>数据</SectionTitle>
+      {/* 设备与数据 */}
+      <SectionTitle>设备与数据</SectionTitle>
       <Card style={{ overflow: 'hidden' }}>
+        <SettingRow
+          label={install.installed ? '已安装到主屏幕' : '安装到手机主屏幕'}
+          desc={
+            install.installed
+              ? '现在是从主屏幕启动的独立 App'
+              : '像普通 App 一样打开，第一次加载后断网也能用'
+          }
+          onClick={() => setInstallOpen(true)}
+          control={
+            <Icon
+              name={install.installed ? 'check' : 'download'}
+              size={18}
+              style={{ color: install.installed ? C.success : C.muted }}
+            />
+          }
+        />
+        <SettingRow
+          label="下载安卓安装包（APK）"
+          desc="约 4.7 MB · Android 7.0 以上 · 断网可用"
+          onClick={() => apkRef.current?.click()}
+          control={<Icon name="download" size={18} style={{ color: C.muted }} />}
+        />
         <SettingRow
           label="导出备份"
           desc="下载一个 JSON 文件，换设备或防丢失"
@@ -342,6 +287,9 @@ export function ProfilePage() {
           }}
           control={<Icon name="sparkles" size={18} style={{ color: C.muted }} />}
         />
+      </Card>
+
+      <Card style={{ marginTop: 10, overflow: 'hidden' }}>
         <SettingRow
           label={<span style={{ color: C.danger }}>清空全部数据</span>}
           desc="不可恢复，建议先导出备份"
@@ -350,11 +298,13 @@ export function ProfilePage() {
         />
       </Card>
 
-      <div style={{ textAlign: 'center', fontSize: 11.5, color: C.muted, marginTop: 20, lineHeight: 1.8 }}>
+      <div style={{ textAlign: 'center', fontSize: 11.5, color: C.muted, marginTop: 22, lineHeight: 1.8 }}>
         健身日志 v1.1 · 数据只保存在本机浏览器（localStorage）
         <br />
         换浏览器或清理缓存会丢数据，记得导出备份
       </div>
+
+      <a ref={apkRef} href="./gym-log-tyrpy.apk" download="gym-log-tyrpy.apk" style={{ display: 'none' }} />
 
       <input
         ref={fileRef}
@@ -429,7 +379,13 @@ export function ProfilePage() {
             <Button
               variant="danger"
               onClick={() => {
-                replace({ ...data, days: {}, customExercises: [], templates: [] })
+                replace({
+                  ...data,
+                  days: {},
+                  customExercises: [],
+                  templates: [],
+                  cultivation: emptyCultivation(),
+                })
                 setConfirmReset(false)
                 toast('已清空')
               }}

@@ -1,6 +1,7 @@
 import type {
   AppData,
   BodyPartId,
+  CultivationData,
   DayLog,
   Exercise,
   ExerciseLog,
@@ -8,9 +9,30 @@ import type {
   WorkoutTemplate,
 } from '../types'
 import { PRESET_EXERCISES } from '../data/exercises'
+import { emptyCultivation, seedCultivation } from './cultivation'
 import { setVolume, shiftDateKey, todayKey, uid } from './utils'
 
 const STORAGE_KEY = 'gym-log:data'
+/** 首次迁移的结算起点；在数据落盘前用它保证多次启动的 cutoff 一致 */
+const CULTIVATION_CUTOFF_KEY = 'gym-log:cultivation-cutoff'
+
+/**
+ * 迁移起点只确定一次。
+ *
+ * 用户可能打开应用看一眼就关掉、没有触发保存；如果每次都用「今天」作为
+ * cutoff，结算线会一天天往后漂。用一个独立的小键记住第一次迁移的日期。
+ */
+function migrationCutoff(): string {
+  try {
+    const saved = localStorage.getItem(CULTIVATION_CUTOFF_KEY)
+    if (saved && /^\d{4}-\d{2}-\d{2}$/.test(saved)) return saved
+    const today = todayKey()
+    localStorage.setItem(CULTIVATION_CUTOFF_KEY, today)
+    return today
+  } catch {
+    return todayKey()
+  }
+}
 
 export function emptyData(): AppData {
   return {
@@ -18,6 +40,7 @@ export function emptyData(): AppData {
     days: {},
     customExercises: [],
     templates: [],
+    cultivation: emptyCultivation(),
     settings: {
       unit: 'kg',
       defaultRestSeconds: 90,
@@ -27,6 +50,30 @@ export function emptyData(): AppData {
   }
 }
 
+/** 把可能缺字段的 cultivation 补齐；版本不对则视为没有结算状态 */
+function normalizeCultivation(raw: unknown): CultivationData | null {
+  if (!raw || typeof raw !== 'object') return null
+  const c = raw as Partial<CultivationData>
+  const cutoff = c.cutoff
+  if (c.version !== 2 || typeof cutoff !== 'string') return null
+  const base = emptyCultivation(cutoff)
+  return {
+    ...base,
+    ...c,
+    version: 2,
+    cutoff,
+    settledXp: typeof c.settledXp === 'number' ? c.settledXp : 0,
+    settledBreakdown: { ...base.settledBreakdown, ...(c.settledBreakdown ?? {}) },
+    settledStats: { ...base.settledStats, ...(c.settledStats ?? {}) },
+  }
+}
+
+/**
+ * 载入数据。
+ *
+ * 旧版本没有 cultivation 字段：这里把已有记录按旧规则一次性结算（冻结），
+ * 之后的新记录才按 v2 规则计算。迁移只发生一次，结果会随下一次保存写回。
+ */
 export function loadData(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -34,14 +81,20 @@ export function loadData(): AppData {
     const parsed = JSON.parse(raw) as Partial<AppData> & { version?: number }
     if (!parsed || typeof parsed.days !== 'object' || parsed.days === null) return emptyData()
     const base = emptyData()
-    return {
+    const merged: AppData = {
       ...base,
       ...parsed,
       version: 2,
       days: parsed.days ?? {},
       customExercises: parsed.customExercises ?? [],
       templates: parsed.templates ?? [],
+      cultivation: base.cultivation,
       settings: { ...base.settings, ...(parsed.settings ?? {}) },
+    }
+    const cultivation = normalizeCultivation(parsed.cultivation)
+    return {
+      ...merged,
+      cultivation: cultivation ?? seedCultivation(merged, migrationCutoff()),
     }
   } catch {
     return emptyData()
@@ -171,19 +224,6 @@ export function loggedDates(data: AppData): string[] {
   return Object.keys(data.days)
     .filter((d) => hasAnyLog(data.days[d]))
     .sort()
-}
-
-/** 连续训练天数（从今天或昨天往前算） */
-export function trainingStreak(data: AppData): number {
-  const dates = new Set(loggedDates(data))
-  const today = todayKey()
-  let cursor = dates.has(today) ? today : shiftDateKey(today, -1)
-  let n = 0
-  while (dates.has(cursor)) {
-    n++
-    cursor = shiftDateKey(cursor, -1)
-  }
-  return n
 }
 
 /* ---------------- 变更操作（纯函数，返回新 AppData） ---------------- */
@@ -527,14 +567,20 @@ export function importJson(raw: string): AppData | null {
     const candidate = 'data' in parsed && parsed.data ? parsed.data : (parsed as AppData)
     if (!candidate || typeof candidate.days !== 'object') return null
     const base = emptyData()
-    return {
+    const merged: AppData = {
       ...base,
       ...candidate,
       version: 2,
       days: candidate.days ?? {},
       customExercises: candidate.customExercises ?? [],
       templates: candidate.templates ?? [],
+      cultivation: base.cultivation,
       settings: { ...base.settings, ...(candidate.settings ?? {}) },
+    }
+    const cultivation = normalizeCultivation(candidate.cultivation)
+    return {
+      ...merged,
+      cultivation: cultivation ?? seedCultivation(merged),
     }
   } catch {
     return null
@@ -583,5 +629,7 @@ export function sampleData(): AppData {
     ['deadlift', '硬拉', [[100, 5], [110, 5], [110, 3]]],
     ['lat-pulldown', '高位下拉', [[45, 12], [45, 12]]],
   ])
+  // 示例数据当作一直按新规则记录，便于直接预览 v2 的修为效果
+  data.cultivation = emptyCultivation('0000-01-01')
   return data
 }

@@ -32,11 +32,11 @@ export const ART = {
   benchPad: '#b98a6e',
   cable: '#a89c87',
   machine: '#cbbfa9',
-  floor: '#e0d5c0',
-  panel: '#faf5e9',
-  panelBorder: '#ddd3bd',
+  floor: '#e6dbc7',
+  panel: '#fbf7ee',
+  panelBorder: '#e3d8c4',
   accent: '#a63a2b',
-  muted: '#8a8272',
+  muted: '#857b69',
 } as const
 
 export const p = (x: number, y: number): Pt => [x, y]
@@ -130,6 +130,203 @@ export function FigureFront({
   )
 }
 
+/** 重画手部端点：器械画在人物之后时，让手压在杠铃/哑铃上，避免看起来悬空 */
+export function Hands({ pose, front = false }: { pose: Pose; front?: boolean }) {
+  return (
+    <g>
+      <circle cx={pose.arms[0].c[0]} cy={pose.arms[0].c[1]} r={3.1} fill={front ? ART.body : ART.far} />
+      <circle cx={pose.arms[1].c[0]} cy={pose.arms[1].c[1]} r={3.4} fill={ART.body} />
+    </g>
+  )
+}
+
+/** 动作方向箭头追踪的身体部位 */
+export type FocusPoint = 'hand0' | 'hand1' | 'foot0' | 'foot1' | 'pelvis' | 'chest' | 'head'
+
+/** 教学高亮用的肌群区域 */
+export type MuscleRegion =
+  | 'chest'
+  | 'back'
+  | 'shoulder'
+  | 'biceps'
+  | 'triceps'
+  | 'core'
+  | 'glutes'
+  | 'quads'
+  | 'hamstrings'
+  | 'calves'
+
+export function pointOf(pose: Pose, focus: FocusPoint): Pt {
+  switch (focus) {
+    case 'hand0':
+      return pose.arms[0].c
+    case 'hand1':
+      return pose.arms[1].c
+    case 'foot0':
+      return pose.legs[0].c
+    case 'foot1':
+      return pose.legs[1].c
+    case 'pelvis':
+      return pose.pelvis
+    case 'chest':
+      return pose.chest
+    case 'head':
+      return pose.head
+  }
+}
+
+/** 肌群高亮用的浅色调：比部位主色更亮，叠在深色人体上才看得清 */
+const MUSCLE_TINT: Record<MuscleRegion, string> = {
+  chest: '#d4695a',
+  back: '#6f9db0',
+  shoulder: '#d6a24a',
+  biceps: '#a98bc9',
+  triceps: '#a98bc9',
+  core: '#c97794',
+  glutes: '#c08a67',
+  quads: '#7fb28d',
+  hamstrings: '#7fb28d',
+  calves: '#b0b06a',
+}
+
+/**
+ * 发力肌群高亮：叠在人体之上，用浅色把目标区域「染」出来。
+ * 侧视图中二头/三头、股四/腘绳难以区分，所以同一段肢体只画一层。
+ */
+export function MuscleGlow({
+  pose,
+  regions,
+  front = false,
+}: {
+  pose: Pose
+  regions: MuscleRegion[]
+  front?: boolean
+}) {
+  if (regions.length === 0) return null
+
+  const armActive = regions.includes('biceps') || regions.includes('triceps')
+  const thighActive = regions.includes('quads') || regions.includes('hamstrings')
+  const chestX = pose.chest[0] + (pose.pelvis[0] - pose.chest[0]) * 0.22
+  const chestY = pose.chest[1] + (pose.pelvis[1] - pose.chest[1]) * 0.22
+  const backX = pose.chest[0] + (pose.pelvis[0] - pose.chest[0]) * 0.38
+  const backY = pose.chest[1] + (pose.pelvis[1] - pose.chest[1]) * 0.38
+  const coreX = (pose.chest[0] + pose.pelvis[0]) / 2
+  const coreY = (pose.chest[1] + pose.pelvis[1]) / 2
+
+  return (
+    <g pointerEvents="none">
+      {regions.includes('chest') ? (
+        <ellipse cx={chestX} cy={chestY} rx={front ? 11 : 7} ry={9} fill={MUSCLE_TINT.chest} opacity={0.62} />
+      ) : null}
+      {regions.includes('back') ? (
+        <ellipse cx={backX} cy={backY} rx={front ? 10 : 7} ry={10} fill={MUSCLE_TINT.back} opacity={0.62} />
+      ) : null}
+      {regions.includes('core') ? (
+        <ellipse cx={coreX} cy={coreY} rx={6} ry={9} fill={MUSCLE_TINT.core} opacity={0.6} />
+      ) : null}
+      {regions.includes('glutes') ? (
+        <ellipse cx={pose.pelvis[0]} cy={pose.pelvis[1]} rx={7} ry={6} fill={MUSCLE_TINT.glutes} opacity={0.66} />
+      ) : null}
+      {regions.includes('shoulder')
+        ? pose.arms.map((a, i) => (
+            <circle key={`sh${i}`} cx={a.a[0]} cy={a.a[1]} r={4.5} fill={MUSCLE_TINT.shoulder} opacity={0.7} />
+          ))
+        : null}
+      {armActive
+        ? pose.arms.map((a, i) => (
+            <line
+              key={`arm${i}`}
+              x1={a.a[0]}
+              y1={a.a[1]}
+              x2={a.b[0]}
+              y2={a.b[1]}
+              stroke={MUSCLE_TINT.biceps}
+              strokeWidth={4}
+              strokeLinecap="round"
+              opacity={0.72}
+            />
+          ))
+        : null}
+      {thighActive
+        ? pose.legs.map((l, i) => (
+            <line
+              key={`thigh${i}`}
+              x1={l.a[0]}
+              y1={l.a[1]}
+              x2={l.b[0]}
+              y2={l.b[1]}
+              stroke={MUSCLE_TINT.quads}
+              strokeWidth={4.5}
+              strokeLinecap="round"
+              opacity={0.72}
+            />
+          ))
+        : null}
+      {regions.includes('calves')
+        ? pose.legs.map((l, i) => (
+            <line
+              key={`calf${i}`}
+              x1={l.b[0]}
+              y1={l.b[1]}
+              x2={l.c[0]}
+              y2={l.c[1]}
+              stroke={MUSCLE_TINT.calves}
+              strokeWidth={3.5}
+              strokeLinecap="round"
+              opacity={0.72}
+            />
+          ))
+        : null}
+    </g>
+  )
+}
+
+/** 从 from 指向 to 的虚线小箭头，用来提示动作路径 */
+export function MotionArrow({ from, to, color }: { from: Pt; to: Pt; color: string }) {
+  const dx = to[0] - from[0]
+  const dy = to[1] - from[1]
+  const len = Math.hypot(dx, dy)
+  if (len < 7) return null
+
+  const ux = dx / len
+  const uy = dy / len
+  // 垂直于动作方向的偏移，避免箭头压在手/杠铃上
+  const nx = -uy * 9
+  const ny = ux * 9
+  const tailX = from[0] + ux * 9 + nx
+  const tailY = from[1] + uy * 9 + ny
+  const reach = Math.min(27, Math.max(14, len * 0.55))
+  const tipX = from[0] + ux * (9 + reach) + nx
+  const tipY = from[1] + uy * (9 + reach) + ny
+  const midX = (tailX + tipX) / 2 + ux * 4
+  const midY = (tailY + tipY) / 2 + uy * 4
+  const head = 4.6
+  const ax1X = tipX - ux * head * 1.7 + (-uy) * head
+  const ax1Y = tipY - uy * head * 1.7 + ux * head
+  const ax2X = tipX - ux * head * 1.7 - (-uy) * head
+  const ax2Y = tipY - uy * head * 1.7 - ux * head
+
+  return (
+    <g opacity={0.72} pointerEvents="none">
+      <path
+        d={`M${tailX.toFixed(1)} ${tailY.toFixed(1)} Q${midX.toFixed(1)} ${midY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}`}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeDasharray="3 3"
+      />
+      <path
+        d={`M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${ax1X.toFixed(1)} ${ax1Y.toFixed(1)} M${tipX.toFixed(1)} ${tipY.toFixed(1)} L${ax2X.toFixed(1)} ${ax2Y.toFixed(1)}`}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      />
+    </g>
+  )
+}
+
 /** 地面线 */
 export function Floor({ y = 168, x1 = 18, x2 = 142 }: { y?: number; x1?: number; x2?: number }) {
   return <line x1={x1} y1={y} x2={x2} y2={y} stroke={ART.floor} strokeWidth={3} strokeLinecap="round" />
@@ -145,36 +342,45 @@ export function Mat({ y = 166, x1 = 14, x2 = 146 }: { y?: number; x1?: number; x
   )
 }
 
-/** 杠铃（横置）：两端各两片杠铃片 */
+/**
+ * 杠铃（侧视）：杆轴朝向屏幕内，看到的是杠铃片正面。
+ * x 是杠铃片中心；缺省时取 x1/x2 的中点，兼容旧调用。
+ */
 export function Barbell({
   y,
+  x,
   x1 = 38,
   x2 = 142,
   plate = 1,
 }: {
   y: number
+  x?: number
   x1?: number
   x2?: number
+  /** 片的相对大小；小于 0.7 时按普通杆端处理（如下拉杆） */
   plate?: number
 }) {
-  const ph = 26 * plate
-  const pw = 5
+  const cx = x ?? (x1 + x2) / 2
+  const r = 12.5 * Math.max(0.6, plate)
+  const plated = plate >= 0.7
   return (
     <g>
-      <line x1={x1} y1={y} x2={x2} y2={y} stroke={ART.bar} strokeWidth={4} strokeLinecap="round" />
-      {[x1 + 3, x2 - 3].map((x, i) => (
-        <g key={i}>
-          <rect x={x - pw / 2} y={y - ph / 2} width={pw} height={ph} rx={2.5} fill={ART.plate} />
-          <rect
-            x={x + (i === 0 ? pw : -pw * 2)}
-            y={y - ph * 0.38}
-            width={pw}
-            height={ph * 0.76}
-            rx={2}
-            fill={ART.plateDark}
+      <circle cx={cx} cy={y} r={r} fill={plated ? ART.plate : ART.bar} />
+      {plated ? (
+        <>
+          <circle
+            cx={cx}
+            cy={y}
+            r={r * 0.76}
+            fill="none"
+            stroke={ART.plateDark}
+            strokeWidth={1.4}
+            opacity={0.55}
           />
-        </g>
-      ))}
+          <circle cx={cx} cy={y} r={r * 0.36} fill={ART.plateDark} />
+        </>
+      ) : null}
+      <circle cx={cx} cy={y} r={Math.max(2, r * 0.17)} fill={ART.bar} />
     </g>
   )
 }

@@ -91,11 +91,11 @@ export function InstallSheet({
               display: 'flex',
               gap: 8,
               background: C.warningSoft,
-              border: `1px solid #ffe2ad`,
+              border: `1px solid ${C.warning}33`,
               borderRadius: 10,
               padding: '10px 12px',
               fontSize: 12.5,
-              color: '#7a5200',
+              color: C.warning,
               lineHeight: 1.6,
             }}
           >

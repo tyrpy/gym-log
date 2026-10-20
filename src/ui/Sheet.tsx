@@ -61,7 +61,7 @@ export function Sheet({
     >
       <div
         onClick={onClose}
-        style={{ position: 'absolute', inset: 0, background: 'rgba(16,24,40,.42)', backdropFilter: 'blur(2px)' }}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(33,30,24,.38)', backdropFilter: 'blur(2px)' }}
       />
       <div
         role="dialog"
@@ -83,7 +83,7 @@ export function Sheet({
         }}
       >
         <div style={{ padding: '10px 0 0', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: 42, height: 5, borderRadius: 999, background: '#d3d8e0' }} />
+          <div style={{ width: 42, height: 5, borderRadius: 999, background: C.borderStrong }} />
         </div>
         {title ? (
           <div
@@ -170,7 +170,7 @@ export function Modal({
         animation: 'fade-in .15s ease',
       }}
     >
-      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(16,24,40,.46)' }} />
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(33,30,24,.42)' }} />
       <div
         role="dialog"
         aria-modal="true"

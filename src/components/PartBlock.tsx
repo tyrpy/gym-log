@@ -189,7 +189,7 @@ function ExerciseBlock({
   const best = log.sets.length ? Math.max(...log.sets.map((s) => s.weight)) : 0
 
   return (
-    <div style={{ padding: '6px 12px 10px', borderTop: last ? 'none' : `1px solid #f0f2f5` }}>
+    <div style={{ padding: '6px 12px 10px', borderTop: last ? 'none' : `1px solid ${C.border}` }}>
       {/* 动作名 + 上次成绩 */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, paddingTop: 6 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -426,7 +426,7 @@ function SetRow({
       <button
         aria-label="删除这一组"
         onClick={() => update((d) => removeSet(d, date, entryId, logId, set.id))}
-        style={{ color: '#aab2bd', display: 'flex', justifyContent: 'center', padding: 4 }}
+        style={{ color: C.muted, display: 'flex', justifyContent: 'center', padding: 4 }}
       >
         <Icon name="x" size={15} />
       </button>

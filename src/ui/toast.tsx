@@ -58,7 +58,7 @@ export function ToastHost() {
         <div
           key={t.id}
           style={{
-            background: '#1a1e24',
+            background: '#211e18',
             color: '#fff',
             padding: '9px 16px',
             borderRadius: 999,
