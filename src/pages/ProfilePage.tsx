@@ -262,7 +262,7 @@ export function ProfilePage() {
         />
         <SettingRow
           label="下载安卓安装包（APK）"
-          desc="约 4.7 MB · Android 7.0 以上 · 断网可用"
+          desc="约 8 MB · Android 7.0 以上 · 断网可用"
           onClick={() => apkRef.current?.click()}
           control={<Icon name="download" size={18} style={{ color: C.muted }} />}
         />

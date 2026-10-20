@@ -125,13 +125,15 @@ try {
   await sleep(2000)
   check('恢复网络后正常', await evaluate(`document.body.innerText.includes('记录部位')`))
 
-  // 8) 安装入口（个人页）
-  await evaluate(`document.querySelectorAll('nav button')[3].click()`)
-  await sleep(900)
+  // 8) 安装入口（个人页，用 URL 直达避免依赖导航顺序）
+  await evaluate(`location.href = './?page=me'`)
+  await sleep(1800)
   check('个人页有安装入口', await evaluate(`document.body.innerText.includes('安装到手机主屏幕')`))
   await shot('02-install-entry')
-  await evaluate(`(() => { const b=[...document.querySelectorAll('button')].find(x=>x.textContent.includes('安装到手机主屏幕')); b&&b.click(); return true })()`)
-  await sleep(700)
+  await evaluate(
+    `(() => { const el = [...document.querySelectorAll('div,button')].find(x => x.textContent.trim().startsWith('安装到手机主屏幕') && x.textContent.length < 80); if (!el) return false; el.click(); return true })()`,
+  )
+  await sleep(800)
   await shot('03-install-sheet')
   check('安装说明面板打开', await evaluate(`document.body.innerText.includes('添加到主屏幕') || document.body.innerText.includes('立即安装')`))
 
