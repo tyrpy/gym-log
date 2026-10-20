@@ -424,6 +424,42 @@ export function saveTemplateFromDay(data: AppData, date: string, name: string): 
   return { ...data, templates: [...data.templates, template] }
 }
 
+/** 新建模板：由编辑器传入名称与「动作 + 部位」清单 */
+export function createTemplate(
+  data: AppData,
+  name: string,
+  items: WorkoutTemplate['items'],
+): AppData {
+  const clean = items.filter((i) => i.exerciseId)
+  if (clean.length === 0) return data
+  const template: WorkoutTemplate = {
+    id: uid('tpl-'),
+    name: name.trim() || '新模板',
+    items: clean,
+    createdAt: Date.now(),
+  }
+  return { ...data, templates: [...data.templates, template] }
+}
+
+/** 编辑已有模板 */
+export function updateTemplate(
+  data: AppData,
+  templateId: string,
+  patch: { name?: string; items?: WorkoutTemplate['items'] },
+): AppData {
+  return {
+    ...data,
+    templates: data.templates.map((t) =>
+      t.id === templateId
+        ? {
+            ...t,
+            name: patch.name !== undefined ? patch.name.trim() || t.name : t.name,
+            items: patch.items ? patch.items.filter((i) => i.exerciseId) : t.items,
+          }
+        : t,
+    ),
+  }
+}
 export function removeTemplate(data: AppData, templateId: string): AppData {
   return { ...data, templates: data.templates.filter((t) => t.id !== templateId) }
 }

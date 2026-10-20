@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import type { BodyPartId, Equipment } from '../types'
+import type { BodyPartId, Equipment, WorkoutTemplate } from '../types'
 import { BODY_PARTS, BODY_PART_MAP, EQUIPMENT_LABEL } from '../data/exercises'
 import { PART_COLORS } from '../data/details'
 import { C } from '../ui/tokens'
@@ -12,6 +12,7 @@ import { toast } from '../ui/toast'
 import { useGym } from '../state/gym'
 import { InstallSheet, useInstallState } from '../ui/Install'
 import { CultivationStrip } from '../components/CultivationStrip'
+import { TemplateEditor } from '../components/TemplateEditor'
 import { emptyCultivation } from '../lib/cultivation'
 import {
   addCustomExercise,
@@ -33,6 +34,8 @@ export function ProfilePage() {
   const [newOpen, setNewOpen] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   const [installOpen, setInstallOpen] = useState(false)
+  const [editorOpen, setEditorOpen] = useState(false)
+  const [editingTpl, setEditingTpl] = useState<WorkoutTemplate | null>(null)
   const install = useInstallState()
   const [name, setName] = useState('')
   const [part, setPart] = useState<BodyPartId>('chest')
@@ -145,15 +148,27 @@ export function ProfilePage() {
       {/* 模板 */}
       <SectionTitle
         right={
-          <button
-            onClick={() => {
-              update((d) => addDefaultTemplates(d))
-              toast('已加入推荐模板', 'success')
-            }}
-            style={{ fontSize: 12.5, color: C.info, fontWeight: 600 }}
-          >
-            + 载入推荐模板
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              aria-label="新建模板"
+              onClick={() => {
+                setEditingTpl(null)
+                setEditorOpen(true)
+              }}
+              style={{ fontSize: 12.5, color: C.accent, fontWeight: 700 }}
+            >
+              + 新建
+            </button>
+            <button
+              onClick={() => {
+                update((d) => addDefaultTemplates(d))
+                toast('已加入推荐模板', 'success')
+              }}
+              style={{ fontSize: 12.5, color: C.info, fontWeight: 600 }}
+            >
+              载入推荐
+            </button>
+          </div>
         }
       >
         我的模板（{data.templates.length}）
@@ -181,6 +196,16 @@ export function ProfilePage() {
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{t.name}</div>
                 <div style={{ fontSize: 11.5, color: C.muted }}>{t.items.length} 个动作</div>
               </div>
+              <button
+                aria-label="编辑模板"
+                onClick={() => {
+                  setEditingTpl(t)
+                  setEditorOpen(true)
+                }}
+                style={{ color: C.muted, display: 'flex', padding: 4 }}
+              >
+                <Icon name="edit" size={15} />
+              </button>
               <button
                 aria-label="删除模板"
                 onClick={() => {
@@ -387,6 +412,18 @@ export function ProfilePage() {
       >
         所有训练记录、自定义动作、模板都会被删除，且无法恢复。建议先「导出备份」。
       </Modal>
+
+      {editorOpen ? (
+        <TemplateEditor
+          key={editingTpl?.id ?? 'new'}
+          open
+          editing={editingTpl}
+          onClose={() => {
+            setEditorOpen(false)
+            setEditingTpl(null)
+          }}
+        />
+      ) : null}
     </Page>
   )
 }
