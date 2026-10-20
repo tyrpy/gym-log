@@ -55,7 +55,7 @@ export function TodayPage() {
   }, [data, date])
 
   return (
-    <Page>
+    <Page scenery>
       <PageHeader
         title={
           <button
@@ -111,10 +111,10 @@ export function TodayPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Stat label="动作" value={partCount(day)} unit="个" />
-          <Stat label="组数" value={setCount} unit="组" />
-          <Stat label="完成" value={doneCount} unit="组" tone={C.success} />
-          <Stat label="容量" value={fmtNumber(volume)} unit="kg" />
+          <Stat plain label="动作" value={partCount(day)} unit="个" />
+          <Stat plain label="组数" value={setCount} unit="组" />
+          <Stat plain label="完成" value={doneCount} unit="组" tone={C.success} />
+          <Stat plain label="容量" value={fmtNumber(volume)} unit="kg" />
         </div>
       </Card>
 

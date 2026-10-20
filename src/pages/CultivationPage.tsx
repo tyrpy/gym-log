@@ -16,7 +16,7 @@ import {
 } from '../lib/cultivation'
 import { fmtNumber } from '../lib/utils'
 
-const GOLD = '#e8c37a'
+const GOLD = '#a63a2b'
 
 export function CultivationPage() {
   const { data, go } = useGym()
@@ -94,10 +94,10 @@ function Hero({ stats }: { stats: CultivationStats }) {
         overflow: 'hidden',
         borderRadius: R.xl,
         padding: '20px 18px 16px',
-        background: `radial-gradient(circle at 86% -6%, ${realm.color}66 0%, transparent 52%), linear-gradient(135deg, #151822 0%, #232032 58%, #302741 100%)`,
-        border: '1px solid rgba(232,195,122,.26)',
-        boxShadow: '0 14px 34px rgba(23,26,36,.22)',
-        color: '#f6efe2',
+        background: `radial-gradient(circle at 88% -10%, ${realm.color}22 0%, transparent 56%), linear-gradient(160deg, #fcf7ec 0%, #f5edda 100%)`,
+        border: `1px solid ${C.border}`,
+        boxShadow: '0 1px 0 rgba(90,78,58,.05)',
+        color: C.text,
       }}
     >
       <div
@@ -109,7 +109,7 @@ function Hero({ stats }: { stats: CultivationStats }) {
           fontFamily: SERIF_FONT,
           fontSize: 170,
           lineHeight: 1,
-          color: 'rgba(255,255,255,.045)',
+          color: 'rgba(35,32,25,.055)',
           pointerEvents: 'none',
           userSelect: 'none',
         }}
@@ -124,7 +124,7 @@ function Hero({ stats }: { stats: CultivationStats }) {
           right: 0,
           bottom: 0,
           height: 1,
-          background: `linear-gradient(90deg, transparent, ${GOLD}66, transparent)`,
+          background: `linear-gradient(90deg, transparent, ${C.border}, transparent)`,
         }}
       />
 
@@ -133,12 +133,12 @@ function Hero({ stats }: { stats: CultivationStats }) {
           <svg width={96} height={96} viewBox="0 0 96 96" aria-hidden="true">
             <defs>
               <linearGradient id="cult-ring" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#f7e2b0" />
-                <stop offset="55%" stopColor={GOLD} />
-                <stop offset="100%" stopColor="#b97c2c" />
+                <stop offset="0%" stopColor={realm.color} />
+                <stop offset="55%" stopColor={realm.color} />
+                <stop offset="100%" stopColor={realm.color} />
               </linearGradient>
             </defs>
-            <circle cx={48} cy={48} r={ringR} fill="none" stroke="rgba(255,255,255,.10)" strokeWidth={6} />
+            <circle cx={48} cy={48} r={ringR} fill="none" stroke="rgba(35,32,25,.10)" strokeWidth={6} />
             <circle
               cx={48}
               cy={48}
@@ -150,7 +150,7 @@ function Hero({ stats }: { stats: CultivationStats }) {
               strokeDasharray={ringLen}
               strokeDashoffset={ringLen * (1 - progress)}
               transform="rotate(-90 48 48)"
-              style={{ filter: 'drop-shadow(0 0 6px rgba(232,195,122,.45))' }}
+              style={{ filter: 'none' }}
             />
           </svg>
           <div
@@ -167,7 +167,7 @@ function Hero({ stats }: { stats: CultivationStats }) {
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 10, letterSpacing: 2.4, color: 'rgba(232,195,122,.8)', fontWeight: 700 }}>
+          <div style={{ fontSize: 10, letterSpacing: 2.4, color: C.accent, fontWeight: 700 }}>
             当前境界
           </div>
           <div
@@ -177,12 +177,12 @@ function Hero({ stats }: { stats: CultivationStats }) {
               fontWeight: 700,
               letterSpacing: 2,
               lineHeight: 1.3,
-              color: '#fff8e9',
+              color: C.text,
             }}
           >
             {level.name}
           </div>
-          <div style={{ fontSize: 11.5, color: 'rgba(246,239,226,.56)' }}>
+          <div style={{ fontSize: 11.5, color: C.muted }}>
             {realm.name}境 · 第 {level.level} 级
           </div>
         </div>
@@ -196,7 +196,7 @@ function Hero({ stats }: { stats: CultivationStats }) {
             justifyContent: 'space-between',
             gap: 10,
             fontSize: 11.5,
-            color: 'rgba(246,239,226,.62)',
+            color: C.muted,
           }}
         >
           <span className="num">
@@ -209,10 +209,10 @@ function Hero({ stats }: { stats: CultivationStats }) {
           style={{
             height: 9,
             borderRadius: 999,
-            background: 'rgba(255,255,255,.12)',
+            background: '#e4d9c2',
             overflow: 'hidden',
             marginTop: 7,
-            boxShadow: 'inset 0 1px 2px rgba(0,0,0,.25)',
+            boxShadow: 'none',
           }}
         >
           <div
@@ -220,8 +220,8 @@ function Hero({ stats }: { stats: CultivationStats }) {
               width: `${progress * 100}%`,
               height: '100%',
               borderRadius: 999,
-              background: 'linear-gradient(90deg, #b97c2c, #e8c37a 55%, #fbe8bd)',
-              boxShadow: '0 0 14px rgba(232,195,122,.55)',
+              background: `linear-gradient(90deg, ${realm.color}, ${realm.color}cc)`,
+              boxShadow: 'none',
               transition: 'width .3s ease',
             }}
           />
@@ -252,9 +252,9 @@ function Pill({ children }: { children: ReactNode }) {
         gap: 4,
         padding: '4px 9px',
         borderRadius: 999,
-        background: 'rgba(255,255,255,.07)',
-        border: '1px solid rgba(255,255,255,.12)',
-        color: 'rgba(246,239,226,.82)',
+        background: 'rgba(35,32,25,.05)',
+        border: `1px solid ${C.border}`,
+        color: C.textSecondary,
         fontSize: 10.5,
         fontWeight: 600,
         whiteSpace: 'nowrap',
@@ -404,7 +404,7 @@ function StreakCard({ stats }: { stats: CultivationStats }) {
                 width: `${progress * 100}%`,
                 height: '100%',
                 borderRadius: 999,
-                background: 'linear-gradient(90deg, #e0a23f, #f0c878)',
+                background: C.accent,
               }}
             />
           </div>

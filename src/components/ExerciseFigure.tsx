@@ -98,7 +98,7 @@ export function ExerciseFigure({
             <Label x={14}>{art.singleLabel ?? '保持'}</Label>
             {art.tag ? (
               <g transform="translate(276 172)">
-                <rect x={0} y={-10} width={40} height={17} rx={8.5} fill="#ffffff" stroke={ART.panelBorder} />
+                <rect x={0} y={-10} width={40} height={17} rx={8.5} fill="#fdf9ef" stroke={ART.panelBorder} />
                 <text x={20} y={2} fontSize={9} fontWeight={600} fill={ART.accent} textAnchor="middle">
                   {art.tag}
                 </text>
@@ -126,7 +126,7 @@ export function ExerciseFigure({
       <Frame x={0} art={art} frame="start" single={false} showLabels={showLabels} />
       <Frame x={170} art={art} frame="end" single={false} showLabels={showLabels} />
       <g transform="translate(165 95)">
-        <circle cx={0} cy={0} r={7} fill="#ffffff" stroke={ART.panelBorder} />
+        <circle cx={0} cy={0} r={7} fill="#fdf9ef" stroke={ART.panelBorder} />
         <path d="M-2.2 -3.4 L1.8 0 L-2.2 3.4" fill="none" stroke={ART.muted} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
       </g>
     </svg>

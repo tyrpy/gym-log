@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 宣纸水墨 -->
+    <color name="colorPrimary">#A63A2B</color>
+    <color name="colorPrimaryDark">#F2EAD9</color>
+    <color name="colorAccent">#A63A2B</color>
+    <color name="windowBackground">#F2EAD9</color>
+    <color name="splashBackground">#F2EAD9</color>
+</resources>

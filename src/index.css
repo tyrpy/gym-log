@@ -1,7 +1,33 @@
+/* ============ 字体：霞鹜文楷（GB2312 子集） ============ */
+@font-face {
+  font-family: "WenKai";
+  src: url("./assets/fonts/wenkai-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "WenKai";
+  src: url("./assets/fonts/wenkai-medium.woff2") format("woff2");
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
-  font-family: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", system-ui,
-    -apple-system, sans-serif;
+
+  /* 宣纸水墨 */
+  --paper: #f2ead9;
+  --paper-light: #faf5e9;
+  --ink: #232019;
+  --ink-soft: #4a4438;
+  --ink-muted: #7d7463;
+  --rule: #d9cfb8;
+  --cinnabar: #a63a2b;
+
+  font-family: "WenKai", "KaiTi", "STKaiti", "Kaiti SC", "Songti SC", serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -20,11 +46,40 @@ body,
 }
 
 body {
-  background: #eff1f5;
-  color: #1a1e24;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: "WenKai", "KaiTi", "STKaiti", "Kaiti SC", "Songti SC", serif;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.55;
+  letter-spacing: 0.2px;
   overscroll-behavior-y: none;
+  /* 宣纸的横向纤维感 */
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(160, 140, 105, 0.035) 0px,
+      rgba(160, 140, 105, 0.035) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(120% 80% at 50% 0%, #f7f0e0 0%, var(--paper) 55%, #ece2cd 100%);
+}
+
+/* 纸面颗粒 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='0.5'/></svg>");
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 button {
@@ -34,6 +89,7 @@ button {
   border: none;
   background: none;
   padding: 0;
+  letter-spacing: inherit;
 }
 
 input,
@@ -41,6 +97,7 @@ textarea,
 select {
   font: inherit;
   color: inherit;
+  letter-spacing: inherit;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -54,27 +111,29 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* 数据用等宽数字，避免跳动 */
+/* 数字用衬线体，等宽对齐 */
 .num {
+  font-family: "Baskerville", "Times New Roman", "Songti SC", serif;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
 ::selection {
-  background: #ffd8cc;
+  background: #e8c9b4;
+  color: #232019;
 }
 
-/* 滚动条（桌面端） */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cfd4dc;
+  background: #cbbc9f;
   border-radius: 10px;
-  border: 3px solid #eff1f5;
+  border: 2px solid var(--paper);
 }
 
+/* ============ 动画 ============ */
 @keyframes sheet-up {
   from {
     transform: translateY(100%);
@@ -96,7 +155,7 @@ input[type="number"] {
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(8px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -104,15 +163,15 @@ input[type="number"] {
   }
 }
 
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 rgba(230, 81, 46, 0.35);
+/* 墨迹扩散：用于出现的卡片 */
+@keyframes ink-spread {
+  from {
+    opacity: 0;
+    filter: blur(2px);
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(230, 81, 46, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(230, 81, 46, 0);
+  to {
+    opacity: 1;
+    filter: blur(0);
   }
 }
 

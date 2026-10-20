@@ -1,6 +1,10 @@
-export const SERIF_FONT = '"Songti SC", "Noto Serif SC", "Source Han Serif SC", "SimSun", serif'
+export const SERIF_FONT =
+  '"WenKai", "KaiTi", "STKaiti", "Kaiti SC", "Songti SC", "SimSun", serif'
 
-/** 境界印记：双层圆环 + 境界单字，带一点金石光泽 */
+/**
+ * 境界印记：朱砂印章的样子。
+ * 方形、细边、微微倾斜，字用境界色，底为纸色。
+ */
 export function CultivationSeal({
   char,
   color,
@@ -12,45 +16,43 @@ export function CultivationSeal({
   size?: number
   dim?: boolean
 }) {
-  const inner = Math.max(3, Math.round(size * 0.09))
+  const ink = dim ? '#a89e8b' : color
   return (
     <div
       aria-hidden="true"
       style={{
         width: size,
         height: size,
-        borderRadius: '50%',
+        borderRadius: Math.max(3, Math.round(size * 0.1)),
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flex: 'none',
-        background: dim
-          ? 'radial-gradient(circle at 35% 30%, rgba(255,255,255,.9), rgba(240,242,246,.7))'
-          : `radial-gradient(circle at 35% 30%, ${color}55, rgba(12,14,20,.35))`,
-        border: `1px solid ${dim ? '#dfe4ea' : `${color}99`}`,
-        boxShadow: dim
-          ? 'none'
-          : `inset 0 0 0 ${Math.max(2, Math.round(size * 0.05))}px rgba(0,0,0,.16), 0 0 0 3px ${color}1f, 0 4px 12px ${color}33`,
+        background: dim ? '#f4efe3' : '#fbf6ea',
+        border: `1.5px solid ${ink}`,
+        boxShadow: dim ? 'none' : `inset 0 0 0 1px rgba(251,246,234,.9), 0 2px 0 ${ink}18`,
+        transform: dim ? 'none' : 'rotate(-2.5deg)',
+        opacity: dim ? 0.7 : 1,
       }}
     >
       <div
         style={{
           position: 'absolute',
-          inset: inner,
-          borderRadius: '50%',
-          border: `1px solid ${dim ? '#e8ecf1' : `${color}66`}`,
+          inset: Math.max(2, Math.round(size * 0.11)),
+          borderRadius: Math.max(2, Math.round(size * 0.06)),
+          border: `1px solid ${ink}4d`,
         }}
       />
       <span
         style={{
           fontFamily: SERIF_FONT,
-          fontSize: Math.round(size * 0.4),
+          fontSize: Math.round(size * 0.46),
           fontWeight: 700,
           lineHeight: 1,
-          color: dim ? '#9aa4b2' : '#f7e7c6',
-          textShadow: dim ? 'none' : `0 0 10px ${color}88`,
+          color: ink,
           transform: 'translateY(1px)',
+          letterSpacing: 0,
         }}
       >
         {char}

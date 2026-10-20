@@ -42,17 +42,18 @@ export const STREAK_MILESTONES: StreakMilestone[] = [
   { days: 365, xp: 5000, title: '道法自然' },
 ]
 
+/** 境界色取自传统矿物颜料：苍绿、黛蓝、赭金、紫墨、赭红、石青…… */
 const REALM_BASE: RealmBase[] = [
-  { id: 'qi', name: '练气', char: '气', color: '#3f9d6b', levels: 4 },
-  { id: 'foundation', name: '筑基', char: '筑', color: '#2f7fd4', levels: 4 },
-  { id: 'gold', name: '金丹', char: '金', color: '#c9922e', levels: 4 },
-  { id: 'nascent', name: '元婴', char: '婴', color: '#8e5bd9', levels: 4 },
-  { id: 'spirit', name: '化神', char: '神', color: '#d24b4b', levels: 4 },
-  { id: 'void', name: '炼虚', char: '虚', color: '#2f9aa8', levels: 4 },
-  { id: 'unity', name: '合体', char: '合', color: '#b34b8f', levels: 4 },
-  { id: 'mahayana', name: '大乘', char: '乘', color: '#5b5bd6', levels: 4 },
-  { id: 'tribulation', name: '渡劫', char: '劫', color: '#b23a3a', levels: 4 },
-  { id: 'ascension', name: '飞升', char: '仙', color: '#c99a1e', levels: 1 },
+  { id: 'qi', name: '练气', char: '气', color: '#4a6b4f', levels: 4 },
+  { id: 'foundation', name: '筑基', char: '筑', color: '#3f5b6b', levels: 4 },
+  { id: 'gold', name: '金丹', char: '金', color: '#8a6a2f', levels: 4 },
+  { id: 'nascent', name: '元婴', char: '婴', color: '#6b5578', levels: 4 },
+  { id: 'spirit', name: '化神', char: '神', color: '#8f3b32', levels: 4 },
+  { id: 'void', name: '炼虚', char: '虚', color: '#3f6470', levels: 4 },
+  { id: 'unity', name: '合体', char: '合', color: '#7a4a63', levels: 4 },
+  { id: 'mahayana', name: '大乘', char: '乘', color: '#4a4f6b', levels: 4 },
+  { id: 'tribulation', name: '渡劫', char: '劫', color: '#7a2f2a', levels: 4 },
+  { id: 'ascension', name: '飞升', char: '仙', color: '#8a6a1f', levels: 1 },
 ]
 
 const STAGES = ['初期', '中期', '后期', '圆满']

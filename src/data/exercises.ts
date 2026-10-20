@@ -1,13 +1,13 @@
 import type { BodyPart, BodyPartId, Equipment, Exercise } from '../types'
 
 export const BODY_PARTS: BodyPart[] = [
-  { id: 'chest', name: '胸', color: '#e5484d', icon: '胸' },
-  { id: 'back', name: '背', color: '#0d74ce', icon: '背' },
-  { id: 'legs', name: '腿', color: '#30a46c', icon: '腿' },
-  { id: 'shoulders', name: '肩', color: '#f76b15', icon: '肩' },
-  { id: 'arms', name: '手臂', color: '#8e5bd9', icon: '臂' },
-  { id: 'core', name: '核心', color: '#d6409f', icon: '核' },
-  { id: 'cardio', name: '有氧', color: '#e2a336', icon: '氧' },
+  { id: 'chest', name: '胸', color: '#8f3b32', icon: '胸' },
+  { id: 'back', name: '背', color: '#3f5b6b', icon: '背' },
+  { id: 'legs', name: '腿', color: '#4a6b4f', icon: '腿' },
+  { id: 'shoulders', name: '肩', color: '#8a6a3a', icon: '肩' },
+  { id: 'arms', name: '手臂', color: '#6b5578', icon: '臂' },
+  { id: 'core', name: '核心', color: '#8a4a63', icon: '核' },
+  { id: 'cardio', name: '有氧', color: '#7a6a3a', icon: '氧' },
 ]
 
 export const BODY_PART_MAP: Record<BodyPartId, BodyPart> = Object.fromEntries(

@@ -3,11 +3,11 @@ import { Icon } from '../ui/Icon'
 import { useGym, type Page } from '../state/gym'
 
 const tabs: Array<{ id: Page; label: string; icon: string }> = [
-  { id: 'today', label: '今天', icon: 'home' },
-  { id: 'history', label: '历史', icon: 'calendar' },
-  { id: 'trends', label: '趋势', icon: 'chart' },
-  { id: 'library', label: '动作', icon: 'dumbbell' },
-  { id: 'me', label: '我的', icon: 'user' },
+  { id: 'today', label: '今 日', icon: 'home' },
+  { id: 'history', label: '历 史', icon: 'calendar' },
+  { id: 'trends', label: '趋 势', icon: 'chart' },
+  { id: 'library', label: '动 作', icon: 'dumbbell' },
+  { id: 'me', label: '我 的', icon: 'user' },
 ]
 
 export function BottomNav() {
@@ -24,13 +24,13 @@ export function BottomNav() {
         display: 'flex',
         justifyContent: 'center',
         paddingBottom: 'env(safe-area-inset-bottom)',
-        background: 'rgba(255,255,255,.92)',
-        backdropFilter: 'blur(16px) saturate(1.6)',
-        WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
+        background: 'rgba(250,245,233,.94)',
+        backdropFilter: 'blur(14px) saturate(1.2)',
+        WebkitBackdropFilter: 'blur(14px) saturate(1.2)',
         borderTop: `1px solid ${C.border}`,
       }}
     >
-      <div style={{ display: 'flex', width: '100%', maxWidth: MAXW, padding: '6px 6px 4px' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: MAXW, padding: '7px 4px 5px' }}>
         {tabs.map((t) => {
           const active = page === t.id || (page === 'cultivation' && t.id === 'me')
           return (
@@ -43,29 +43,35 @@ export function BottomNav() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: 3,
-                padding: '4px 0 3px',
+                gap: 4,
+                padding: '3px 0 2px',
                 color: active ? C.accent : C.muted,
                 transition: 'color .15s ease',
+                position: 'relative',
               }}
             >
-              <div
+              <Icon name={t.icon} size={20} strokeWidth={active ? 1.9 : 1.6} />
+              <span
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 44,
-                  height: 26,
-                  borderRadius: 999,
-                  background: active ? C.accentSoft : 'transparent',
-                  transition: 'background .15s ease',
+                  fontSize: 10,
+                  fontWeight: active ? 700 : 400,
+                  letterSpacing: 1,
+                  // 选中时下方一点朱砂
                 }}
               >
-                <Icon name={t.icon} size={21} strokeWidth={active ? 2.2 : 1.8} />
-              </div>
-              <span style={{ fontSize: 10.5, fontWeight: active ? 700 : 500, letterSpacing: 0.2 }}>
                 {t.label}
               </span>
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  width: active ? 14 : 0,
+                  height: 2,
+                  background: C.accent,
+                  transition: 'width .2s ease',
+                }}
+              />
             </button>
           )
         })}

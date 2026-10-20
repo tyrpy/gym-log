@@ -23,20 +23,20 @@ export interface Pose {
 }
 
 export const ART = {
-  body: '#3d4756',
-  far: '#a6afbc',
-  bar: '#59636f',
-  plate: '#e6512e',
-  plateDark: '#39424f',
-  bench: '#aeb7c2',
-  benchPad: '#e6a08b',
-  cable: '#98a2b0',
-  machine: '#c3cad3',
-  floor: '#d9dee5',
-  panel: '#f7f8fa',
-  panelBorder: '#ebeff4',
-  accent: '#e6512e',
-  muted: '#8b94a3',
+  body: '#2b2a24',
+  far: '#b3a996',
+  bar: '#4a4740',
+  plate: '#a63a2b',
+  plateDark: '#3a362d',
+  bench: '#c2b7a1',
+  benchPad: '#b98a6e',
+  cable: '#a89c87',
+  machine: '#cbbfa9',
+  floor: '#e0d5c0',
+  panel: '#faf5e9',
+  panelBorder: '#ddd3bd',
+  accent: '#a63a2b',
+  muted: '#8a8272',
 } as const
 
 export const p = (x: number, y: number): Pt => [x, y]
@@ -139,8 +139,8 @@ export function Floor({ y = 168, x1 = 18, x2 = 142 }: { y?: number; x1?: number;
 export function Mat({ y = 166, x1 = 14, x2 = 146 }: { y?: number; x1?: number; x2?: number }) {
   return (
     <g>
-      <rect x={x1} y={y} width={x2 - x1} height={7} rx={3.5} fill="#dfe5ec" />
-      <line x1={x1 + 2} y1={y + 1.5} x2={x2 - 2} y2={y + 1.5} stroke="#eef1f5" strokeWidth={1.5} />
+      <rect x={x1} y={y} width={x2 - x1} height={7} rx={3.5} fill="#ded2bb" />
+      <line x1={x1 + 2} y1={y + 1.5} x2={x2 - 2} y2={y + 1.5} stroke="#f6efdf" strokeWidth={1.5} />
     </g>
   )
 }

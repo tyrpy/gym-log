@@ -1,12 +1,12 @@
 /** 各部位的独立强调色（比大部位色更细分，用于图表与标签） */
 export const PART_COLORS: Record<string, string> = {
-  chest: '#e5484d',
-  back: '#0d74ce',
-  legs: '#30a46c',
-  shoulders: '#f76b15',
-  arms: '#8e5bd9',
-  core: '#d6409f',
-  cardio: '#c99a00',
+  chest: '#8f3b32', // 赭红
+  back: '#3f5b6b', // 黛蓝
+  legs: '#4a6b4f', // 苍绿
+  shoulders: '#8a6a3a', // 赭黄
+  arms: '#6b5578', // 紫墨
+  core: '#8a4a63', // 绛紫
+  cardio: '#7a6a3a', // 土黄
 }
 
 /** 子部位：只用于选动作时的快速筛选（不单独存储） */

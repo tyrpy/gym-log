@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>水墨风方案预览</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    background: #d9d5cc;
+    font-family: "Songti SC", "SimSun", serif;
+  }
+
+  /* ---------- 手机画框 ---------- */
+  .phone {
+    position: relative;
+    width: 414px; height: 896px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: var(--font-body);
+  }
+  .phone::after {
+    /* 纸纹 / 颗粒 */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    opacity: var(--grain); mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='0.55'/></svg>");
+  }
+
+  /* ---------- 背景装饰 ---------- */
+  .scenery { position: absolute; inset: auto 0 0 0; height: 58%; pointer-events: none; }
+  .scenery svg { width: 100%; height: 100%; display: block; }
+
+  /* ---------- 头部 ---------- */
+  header {
+    position: relative; z-index: 3;
+    padding: 34px 22px 12px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .title {
+    font-family: var(--font-title);
+    font-size: 30px; font-weight: 700; letter-spacing: 2px;
+    line-height: 1.2;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .title .sub {
+    font-family: var(--font-body);
+    font-size: 11px; letter-spacing: 3px; color: var(--muted); font-weight: 400;
+  }
+  .date { margin-top: 6px; font-size: 12px; color: var(--muted); letter-spacing: 1.5px; }
+  .arrows { display: flex; gap: 8px; margin-top: 4px; }
+  .arrows span {
+    width: 30px; height: 30px; border: 1px solid var(--line); border-radius: var(--rad-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--muted); background: var(--card);
+  }
+
+  /* ---------- 内容 ---------- */
+  main { position: relative; z-index: 3; padding: 4px 18px 0; flex: 1; overflow: hidden; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--rad);
+    box-shadow: var(--card-shadow);
+    position: relative;
+  }
+
+  .summary { padding: 14px 14px 12px; margin-top: 10px; }
+  .summary-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .label {
+    font-family: var(--font-title);
+    font-size: 14px; letter-spacing: 2px; color: var(--ink);
+  }
+  .part-tags { display: flex; gap: 6px; }
+  .part-tag {
+    font-size: 10.5px; letter-spacing: 1px; padding: 2px 8px;
+    border-radius: 999px; border: 1px solid var(--tag-line);
+    color: var(--tag-ink); background: var(--tag-bg);
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .stat { text-align: center; padding: 6px 0 4px; position: relative; }
+  .stat + .stat::before {
+    content: ""; position: absolute; left: 0; top: 14%; height: 72%;
+    border-left: 1px solid var(--line);
+  }
+  .stat .k { font-size: 10px; letter-spacing: 1px; color: var(--muted); }
+  .stat .v {
+    font-family: var(--font-num);
+    font-size: 21px; font-weight: 700; line-height: 1.3; margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .v small { font-size: 10px; font-weight: 400; color: var(--muted); margin-left: 2px; }
+
+  .actions { display: flex; gap: 10px; margin-top: 12px; }
+  .btn-primary {
+    flex: 1; height: 48px; border-radius: var(--rad);
+    background: var(--accent); color: var(--on-accent);
+    font-family: var(--font-title);
+    font-size: 17px; letter-spacing: 4px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: var(--btn-shadow);
+    border: 1px solid var(--accent-line);
+  }
+  .btn-ghost {
+    width: 96px; height: 48px; border-radius: var(--rad);
+    border: 1px solid var(--line); background: var(--card);
+    color: var(--ink); font-family: var(--font-title);
+    font-size: 15px; letter-spacing: 3px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  .section-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 18px 2px 9px;
+    font-family: var(--font-title); font-size: 14px; letter-spacing: 3px;
+    color: var(--ink);
+  }
+  .section-title::before {
+    content: ""; width: 3px; height: 13px; background: var(--accent); border-radius: 1px;
+  }
+  .section-title .more {
+    margin-left: auto; font-family: var(--font-body);
+    font-size: 11px; letter-spacing: 1px; color: var(--accent);
+  }
+
+  .entry { padding: 0 0 12px; overflow: hidden; }
+  .entry-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; background: var(--entry-bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .badge {
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-family: var(--font-num);
+    border: 1px solid var(--badge-line); border-radius: 50%;
+    color: var(--tag-ink); background: var(--tag-bg);
+  }
+  .entry-name { font-family: var(--font-title); font-size: 16px; letter-spacing: 3px; }
+  .entry-meta { font-size: 10.5px; color: var(--muted); letter-spacing: 0.5px; margin-left: auto; }
+
+  .ex { padding: 12px 14px 0; }
+  .ex-name { font-size: 14.5px; letter-spacing: 1.5px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+  .tag {
+    font-size: 9.5px; letter-spacing: 0.5px; padding: 1px 5px; border: 1px solid var(--line);
+    border-radius: 3px; color: var(--muted); font-weight: 400;
+  }
+  .ex-prev { font-size: 10.5px; color: var(--muted); margin-top: 3px; letter-spacing: 0.5px; }
+
+  .sets { margin-top: 9px; display: grid; gap: 5px; }
+  .set {
+    display: grid; grid-template-columns: 20px 1fr 12px 1fr 30px 24px;
+    align-items: center; gap: 6px;
+  }
+  .set .idx { font-size: 11px; color: var(--muted); text-align: center; font-family: var(--font-num); }
+  .num-box {
+    height: 30px; border: 1px solid var(--line); border-radius: var(--rad-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-num); font-size: 14px; font-weight: 700;
+    background: var(--input-bg);
+  }
+  .times { text-align: center; font-size: 10px; color: var(--muted); }
+  .check {
+    width: 26px; height: 26px; border-radius: var(--rad-sm);
+    border: 1px solid var(--line); background: var(--input-bg);
+    display: flex; align-items: center; justify-content: center;
+    color: transparent; font-size: 13px;
+  }
+  .check.on {
+    background: var(--done-bg); border-color: var(--done-line); color: var(--done-ink);
+  }
+  .del { color: var(--muted); font-size: 12px; text-align: center; opacity: .55; }
+
+  .ex-foot {
+    display: flex; align-items: center; gap: 8px; margin-top: 9px; padding-bottom: 2px;
+  }
+  .mini {
+    flex: 1; height: 30px; border: 1px solid var(--line); border-radius: var(--rad-sm);
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 11.5px; letter-spacing: 1.5px; color: var(--ink); background: var(--card);
+    font-family: var(--font-title);
+  }
+
+  /* ---------- 休息计时 ---------- */
+  .rest {
+    position: absolute; left: 18px; right: 18px; bottom: 86px; z-index: 6;
+    border-radius: var(--rad);
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 12px;
+    background: var(--rest-bg); color: var(--rest-ink);
+    border: 1px solid var(--rest-line);
+    box-shadow: 0 10px 26px rgba(0,0,0,.28);
+  }
+  .rest .ring {
+    width: 34px; height: 34px; border-radius: 50%; flex: none;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+  .rest .t { font-family: var(--font-num); font-size: 23px; font-weight: 700; letter-spacing: 1px; line-height: 1.1; }
+  .rest .cap { font-size: 9.5px; letter-spacing: 2px; opacity: .65; }
+  .rest .btns { margin-left: auto; display: flex; gap: 4px; }
+  .rest .btns span {
+    min-width: 34px; height: 28px; border-radius: 5px; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--rest-btn); color: var(--rest-ink); letter-spacing: 1px;
+  }
+
+  /* ---------- 底部导航 ---------- */
+  nav {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+    height: 76px; padding: 0 14px 10px;
+    display: flex; align-items: flex-end;
+    background: var(--nav-bg);
+    border-top: 1px solid var(--line);
+    backdrop-filter: blur(6px);
+  }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-bottom: 4px; }
+  .tab .ico { width: 22px; height: 22px; opacity: .55; }
+  .tab.on .ico { opacity: 1; }
+  .tab .txt {
+    font-family: var(--font-title); font-size: 10.5px; letter-spacing: 2px; color: var(--muted);
+  }
+  .tab.on .txt { color: var(--accent); }
+  .tab.on .ico { color: var(--accent); }
+
+  .seal-inline {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; margin-left: 8px; padding: 2px;
+    border: 1.4px solid var(--seal-ink); border-radius: 3px;
+    color: var(--seal-ink); font-family: var(--font-title);
+    font-size: 9.5px; line-height: 1.15; letter-spacing: 0; text-align: center;
+    transform: rotate(-3deg); opacity: .85; vertical-align: middle;
+  }
+
+  /* ---------- 印章 ---------- */
+  .seal {
+    position: absolute; right: 20px; top: 96px; z-index: 4;
+    width: 46px; height: 46px; border-radius: 4px;
+    border: 2px solid var(--seal-ink);
+    color: var(--seal-ink); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-title); font-size: 15px; font-weight: 700;
+    line-height: 1.05; letter-spacing: 1px; text-align: center;
+    transform: rotate(-4deg); opacity: .82;
+  }
+
+  /* ================= 主题 A：宣纸水墨 ================= */
+  .theme-a {
+    --paper: #f2ead9;
+    --card: #faf5e9;
+    --ink: #232019;
+    --muted: #7d7463;
+    --line: #d9cfb8;
+    --accent: #a63a2b;
+    --accent-line: #8f3125;
+    --on-accent: #fdf8ee;
+    --entry-bg: #f3ecdb;
+    --tag-ink: #6b3f34;
+    --tag-bg: #f0e2d6;
+    --tag-line: #dcc3b4;
+    --badge-line: #cdb49f;
+    --input-bg: #fdf9ef;
+    --done-bg: #3f5f4a;
+    --done-line: #34503e;
+    --done-ink: #f6f2e4;
+    --rest-bg: #2a2620;
+    --rest-ink: #f2ead9;
+    --rest-line: #4a4337;
+    --rest-btn: rgba(242,234,217,.12);
+    --nav-bg: rgba(250,245,233,.92);
+    --seal-ink: #a63a2b;
+    --font-title: "KaiTi", "STKaiti", "Kaiti SC", serif;
+    --font-body: "Songti SC", "SimSun", serif;
+    --font-num: "Baskerville", "Times New Roman", serif;
+    --rad: 10px; --rad-sm: 6px;
+    --grain: .16; --grain-blend: multiply;
+    --card-shadow: 0 1px 0 rgba(90,78,58,.06), 0 8px 20px -14px rgba(60,50,35,.35);
+    --btn-shadow: 0 6px 18px -10px rgba(140,50,35,.75);
+  }
+
+  /* ================= 主题 B：玄墨修仙 ================= */
+  .theme-b {
+    --paper: #0d1013;
+    --card: #141a1f;
+    --ink: #e6dfcd;
+    --muted: #8b8474;
+    --line: #2b3238;
+    --accent: #c9a24a;
+    --accent-line: #8f6f26;
+    --on-accent: #14110a;
+    --entry-bg: #101519;
+    --tag-ink: #c9a24a;
+    --tag-bg: rgba(201,162,74,.10);
+    --tag-line: rgba(201,162,74,.35);
+    --badge-line: rgba(201,162,74,.4);
+    --input-bg: #0f1418;
+    --done-bg: rgba(120,190,150,.16);
+    --done-line: rgba(120,190,150,.5);
+    --done-ink: #94d6b2;
+    --rest-bg: #1a2027;
+    --rest-ink: #e6dfcd;
+    --rest-line: #2f3740;
+    --rest-btn: rgba(255,255,255,.07);
+    --nav-bg: rgba(13,16,19,.9);
+    --seal-ink: #c9a24a;
+    --font-title: "Songti SC", "SimSun", serif;
+    --font-body: "Songti SC", "SimSun", serif;
+    --font-num: "Baskerville", "Times New Roman", serif;
+    --rad: 8px; --rad-sm: 5px;
+    --grain: .1; --grain-blend: screen;
+    --card-shadow: 0 0 0 1px rgba(201,162,74,.06), 0 12px 30px -18px rgba(0,0,0,.9);
+    --btn-shadow: 0 8px 24px -12px rgba(201,162,74,.55);
+  }
+
+  /* ================= 主题 C：青绿山水 ================= */
+  .theme-c {
+    --paper: #e8dfc9;
+    --card: #f4eeda;
+    --ink: #1e2f2a;
+    --muted: #6d7d74;
+    --line: #c9bda1;
+    --accent: #335f53;
+    --accent-line: #284c42;
+    --on-accent: #f3eddc;
+    --entry-bg: #ece5d1;
+    --tag-ink: #2f5d63;
+    --tag-bg: #dfe7e1;
+    --tag-line: #bfcfc5;
+    --badge-line: #a9bfb4;
+    --input-bg: #faf6e9;
+    --done-bg: #2f6b5c;
+    --done-line: #275a4d;
+    --done-ink: #f2ecdb;
+    --rest-bg: #23323a;
+    --rest-ink: #eee7d5;
+    --rest-line: #3a4d55;
+    --rest-btn: rgba(238,231,213,.12);
+    --nav-bg: rgba(244,238,218,.92);
+    --seal-ink: #8c3b2e;
+    --font-title: "KaiTi", "STKaiti", serif;
+    --font-body: "Songti SC", "SimSun", serif;
+    --font-num: "Baskerville", "Times New Roman", serif;
+    --rad: 10px; --rad-sm: 6px;
+    --grain: .13; --grain-blend: multiply;
+    --card-shadow: 0 1px 0 rgba(90,78,58,.06), 0 8px 20px -14px rgba(40,60,55,.35);
+    --btn-shadow: 0 6px 18px -10px rgba(45,80,70,.7);
+  }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="scenery" id="scenery"></div>
+
+  <header>
+    <div>
+      <div class="title">今 日 <span class="sub">修 炼 录</span><span class="seal-inline"><span>健身<br>日志</span></span></div>
+      <div class="date">二〇二六年十月二十日 · 周二</div>
+    </div>
+    <div class="arrows"><span>‹</span><span>›</span></div>
+  </header>
+
+  <main>
+    <section class="card summary">
+      <div class="summary-top">
+        <span class="label">本 次 修 炼</span>
+        <span class="part-tags">
+          <span class="part-tag">胸</span>
+          <span class="part-tag">手臂</span>
+        </span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">动作</div><div class="v">3<small>个</small></div></div>
+        <div class="stat"><div class="k">组数</div><div class="v">10<small>组</small></div></div>
+        <div class="stat"><div class="k">完成</div><div class="v">10<small>组</small></div></div>
+        <div class="stat"><div class="k">容量</div><div class="v">3388<small>kg</small></div></div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <div class="btn-primary">＋ 记 录 部 位</div>
+      <div class="btn-ghost">模 板</div>
+    </div>
+
+    <div class="section-title">训 炼 明 细 <span class="more">存为模板 ›</span></div>
+
+    <section class="card entry">
+      <div class="entry-head">
+        <span class="badge">2</span>
+        <span class="entry-name">胸</span>
+        <span class="entry-meta">2 个动作 · 7 组 · 2488kg</span>
+      </div>
+
+      <div class="ex">
+        <div class="ex-name">杠铃卧推 <span class="tag">杠铃</span></div>
+        <div class="ex-prev">上次 10/14：55×10 / 60×8 / 60×8</div>
+        <div class="sets">
+          <div class="set"><span class="idx">1</span><div class="num-box">60</div><span class="times">×</span><div class="num-box">10</div><span class="check on">✓</span><span class="del">✕</span></div>
+          <div class="set"><span class="idx">2</span><div class="num-box">65</div><span class="times">×</span><div class="num-box">8</div><span class="check on">✓</span><span class="del">✕</span></div>
+          <div class="set"><span class="idx">3</span><div class="num-box">70</div><span class="times">×</span><div class="num-box">6</div><span class="check on">✓</span><span class="del">✕</span></div>
+        </div>
+        <div class="ex-foot">
+          <div class="mini">＋ 加 一 组</div>
+          <div class="mini">复 制</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="rest">
+    <div class="ring">息</div>
+    <div>
+      <div class="cap">组 间 休 息</div>
+      <div class="t">2:29 <span style="font-size:11px;opacity:.5">/ 2:30</span></div>
+    </div>
+    <div class="btns"><span>-15</span><span>停</span><span>+15</span></div>
+  </div>
+
+  <nav>
+    <div class="tab on">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>
+      <span class="txt">今 日</span>
+    </div>
+    <div class="tab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+      <span class="txt">历 史</span>
+    </div>
+    <div class="tab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20h18M6 20V12M11 20V7M16 20V4M21 20v-6"/></svg>
+      <span class="txt">趋 势</span>
+    </div>
+    <div class="tab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>
+      <span class="txt">我 的</span>
+    </div>
+  </nav>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search)
+  const theme = params.get('theme') || 'a'
+  const phone = document.getElementById('phone')
+  phone.classList.add('theme-' + theme)
+
+  const scenery = {
+    a: `<svg viewBox="0 0 414 520" preserveAspectRatio="none">
+      <defs>
+        <filter id="ink"><feGaussianBlur stdDeviation="2.2"/></filter>
+        <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+        <linearGradient id="wash" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7d7463" stop-opacity=".26"/>
+          <stop offset="100%" stop-color="#7d7463" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <circle cx="330" cy="104" r="40" fill="#b3a68c" opacity=".22" filter="url(#soft)"/>
+      <path d="M0 300 C60 258 96 276 140 246 C186 214 214 250 258 268 C302 286 344 262 414 292 L414 520 L0 520 Z" fill="url(#wash)" filter="url(#soft)"/>
+      <path d="M0 356 C52 322 88 344 132 318 C178 290 206 322 252 340 C300 358 352 336 414 362 L414 520 L0 520 Z" fill="#5c5546" opacity=".14" filter="url(#ink)"/>
+      <path d="M0 420 C70 392 110 410 158 388 C208 364 240 392 288 408 C336 424 372 408 414 424 L414 520 L0 520 Z" fill="#3f3a2f" opacity=".13" filter="url(#ink)"/>
+      <g stroke="#6b6355" stroke-width=".8" opacity=".22" fill="none">
+        <path d="M28 470 q18 -8 34 2 q16 10 32 0"/>
+        <path d="M330 470 q16 -8 30 2"/>
+      </g>
+    </svg>`,
+    b: `<svg viewBox="0 0 414 520" preserveAspectRatio="none">
+      <defs>
+        <radialGradient id="glow" cx="72%" cy="18%" r="42%">
+          <stop offset="0%" stop-color="#c9a24a" stop-opacity=".18"/>
+          <stop offset="100%" stop-color="#c9a24a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="b"><feGaussianBlur stdDeviation="6"/></filter>
+      </defs>
+      <rect width="414" height="520" fill="url(#glow)"/>
+      <circle cx="306" cy="96" r="32" fill="#c9a24a" opacity=".16" filter="url(#b)"/>
+      <circle cx="306" cy="96" r="17" fill="#f0dca0" opacity=".55"/>
+      <g stroke="#c9a24a" stroke-width=".7" opacity=".18" fill="none">
+        <path d="M0 300 q60 -22 110 -4 q50 18 96 -2 q46 -20 96 -2 q52 18 112 0"/>
+        <path d="M0 340 q70 -18 124 -2 q54 16 104 -4 q50 -20 104 -2 q44 16 82 4"/>
+        <path d="M0 384 q64 -16 116 0 q52 16 100 -4 q48 -20 100 -2 q52 18 98 2"/>
+      </g>
+      <path d="M0 430 C80 400 120 420 170 398 C222 376 258 406 306 418 C352 430 382 420 414 430 L414 520 L0 520 Z" fill="#0a0d10" opacity=".85"/>
+      <g fill="#c9a24a" opacity=".3">
+        <circle cx="60" cy="120" r="1.1"/><circle cx="120" cy="72" r=".9"/><circle cx="196" cy="140" r="1"/>
+        <circle cx="250" cy="60" r=".8"/><circle cx="366" cy="180" r="1"/><circle cx="86" cy="200" r=".7"/>
+      </g>
+    </svg>`,
+    c: `<svg viewBox="0 0 414 520" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5b8c7b" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#5b8c7b" stop-opacity=".12"/>
+        </linearGradient>
+        <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3f6b5e" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#3f6b5e" stop-opacity=".15"/>
+        </linearGradient>
+        <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4a6fa5" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#4a6fa5" stop-opacity=".1"/>
+        </linearGradient>
+        <filter id="soft2"><feGaussianBlur stdDeviation="1.6"/></filter>
+      </defs>
+      <circle cx="92" cy="104" r="30" fill="#c9b98a" opacity=".35" filter="url(#soft2)"/>
+      <path d="M0 286 C54 244 92 262 138 232 C184 202 212 238 258 256 C304 274 348 250 414 280 L414 520 L0 520 Z" fill="url(#m3)" filter="url(#soft2)"/>
+      <path d="M0 340 C56 306 92 330 138 304 C186 276 214 308 260 326 C308 344 354 322 414 348 L414 520 L0 520 Z" fill="url(#m1)" filter="url(#soft2)"/>
+      <path d="M0 404 C68 374 108 396 156 372 C206 348 240 378 288 394 C336 410 374 394 414 410 L414 520 L0 520 Z" fill="url(#m2)" filter="url(#soft2)"/>
+      <g stroke="#3f6b5e" stroke-width=".9" fill="none" opacity=".3">
+        <path d="M40 462 q20 -10 38 0 q18 10 36 0"/>
+        <path d="M300 470 q16 -8 32 0"/>
+      </g>
+    </svg>`
+  }
+  document.getElementById('scenery').innerHTML = scenery[theme] || scenery.a
+</script>
+</body>
+</html>
