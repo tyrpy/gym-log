@@ -23,7 +23,6 @@ import {
   loggedDates,
   removeCustomExercise,
   removeTemplate,
-  sampleData,
 } from '../lib/store'
 import { fmtNumber, todayKey, uid } from '../lib/utils'
 
@@ -277,15 +276,6 @@ export function ProfilePage() {
           desc="会覆盖当前设备上的全部数据"
           onClick={() => fileRef.current?.click()}
           control={<Icon name="upload" size={18} style={{ color: C.muted }} />}
-        />
-        <SettingRow
-          label="载入示例数据"
-          desc="先看看有数据时界面是什么样"
-          onClick={() => {
-            replace(sampleData())
-            toast('已载入示例数据', 'success')
-          }}
-          control={<Icon name="sparkles" size={18} style={{ color: C.muted }} />}
         />
       </Card>
 
